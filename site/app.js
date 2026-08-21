@@ -118,7 +118,9 @@ function zoneFacts(z, coverageMonths) {
   if (z.status === "rated") {
     return [theftLine, "Grade is based on thefts reported at racks in this zone"];
   }
-  return [theftLine, "No reports for this exact zone -- grade is estimated, not measured", estimateBasisPhrase(z)];
+  return [theftLine,
+    "No reports on file for this zone. The grade is estimated based on nearby confirmed reports.",
+    estimateBasisPhrase(z)];
 }
 
 async function loadData() {
@@ -163,7 +165,7 @@ function initMap(zones, racks) {
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
             ? `Zone grade: ${z.grade}<br>${z.incident_count} report(s) on file`
-            : `Zone grade: ~${z.grade} (estimated)<br>No reports for this zone`)
+            : `Zone grade: ~${z.grade} (estimated)<br>No reports on file for this zone`)
         : "Rack (unzoned)")
       .addTo(map);
 
