@@ -91,6 +91,30 @@ function nearestZone(lat, lon, zones) {
   return { zone: best, distM: bestD };
 }
 
+// Minimal inline icons (no icon font/library) for the fact list -- one per
+// line type, sized to sit inline with 0.9rem text.
+const ICONS = {
+  alert: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  info: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+  pin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5.5-8 12-8 12s-8-6.5-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+};
+
+// Counts an element's text up from 0 to target over ~900ms. Purely a
+// hero-stat flourish -- if it's interrupted (e.g. the tab was backgrounded
+// mid-count) the worst case is it just lands on the final number a frame
+// late, no real state to get wrong.
+function animateCount(el, target, duration = 900) {
+  if (!el || !target) { if (el) el.textContent = String(target || 0); return; }
+  const start = performance.now();
+  function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    el.textContent = Math.round(eased * target).toLocaleString();
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function distanceText(distM) {
   return distM < 1000 ? `${Math.round(distM)} m away` : `${(distM / 1000).toFixed(1)} km away`;
 }
@@ -111,16 +135,22 @@ function estimateBasisPhrase(z) {
 
 // Short fact lines for the nearest-zone card. Deliberately terse -- one
 // clause per line, no sentences -- with the "not a guarantee" caveat
-// handled once, outside this list, rather than repeated per zone.
+// handled once, outside this list, rather than repeated per zone. Each
+// line carries an icon key naming which small icon (see ICONS) precedes it.
 function zoneFacts(z, coverageMonths) {
-  const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"} ` +
-    `in ${coveragePhrase(coverageMonths)}`;
+  const theftLine = {
+    icon: "alert",
+    text: `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"} ` +
+      `in ${coveragePhrase(coverageMonths)}`,
+  };
   if (z.status === "rated") {
-    return [theftLine, "Grade is based on thefts reported at racks in this zone"];
+    return [theftLine, { icon: "info", text: "Grade is based on thefts reported at racks in this zone" }];
   }
-  return [theftLine,
-    "No reports on file for this zone. The grade is estimated based on nearby confirmed reports.",
-    estimateBasisPhrase(z)];
+  return [
+    theftLine,
+    { icon: "info", text: "No reports on file for this zone. The grade is estimated based on nearby confirmed reports." },
+    { icon: "pin", text: estimateBasisPhrase(z) },
+  ];
 }
 
 async function loadData() {
@@ -229,6 +259,11 @@ async function main() {
     lastUpdatedEl.textContent = `Data last refreshed: ${new Date(generatedAt).toLocaleString()}`;
   }
 
+  const totalReports = zones.reduce((sum, z) => sum + (z.incident_count || 0), 0);
+  animateCount(document.getElementById("stat-zones"), zones.length);
+  animateCount(document.getElementById("stat-reports"), totalReports);
+  animateCount(document.getElementById("stat-months"), coverageMonths || 0);
+
   const btn = document.getElementById("locate-btn");
   const status = document.getElementById("locate-status");
   const resultEl = document.getElementById("nearest-result");
@@ -266,12 +301,7 @@ async function main() {
     );
   }
 
-  // distM is null when there's no reference point to measure from yet
-  // (e.g. a rack was clicked directly before the visitor ever located
-  // themselves). pan controls whether the map recenters -- skipped for a
-  // direct marker click since the visitor already navigated there.
-  function showZone(zone, distM, { pan = true } = {}) {
-    resultEl.classList.add("visible");
+  function applyZoneContent(zone, distM) {
     const label = badgeLabel(zone);
     gradeEl.textContent = label;
     gradeEl.style.background = badgeColor(zone);
@@ -279,7 +309,7 @@ async function main() {
     nameEl.textContent = zone.name;
     distanceEl.textContent = distM != null ? distanceText(distM) : "";
     factsEl.innerHTML = zoneFacts(zone, coverageMonths)
-      .map(f => `<li>${f}</li>`).join("");
+      .map(f => `<li>${ICONS[f.icon] || ""}<span>${f.text}</span></li>`).join("");
 
     const showWarning = WARNING_GRADES.has(zone.grade);
     warningEl.hidden = !showWarning;
@@ -289,9 +319,34 @@ async function main() {
           `no thefts have been reported here specifically, but be extra careful.`
         : `This zone has had a history of bike thefts. Please be extra careful!`;
     }
+  }
 
+  // distM is null when there's no reference point to measure from yet
+  // (e.g. a rack was clicked directly before the visitor ever located
+  // themselves). pan controls whether the map recenters -- skipped for a
+  // direct marker click since the visitor already navigated there.
+  function showZone(zone, distM, { pan = true } = {}) {
+    const alreadyVisible = resultEl.classList.contains("visible");
     highlightZoneRacks(zone.id, markersByZone);
     if (pan) map.setView([zone.lat, zone.lon], 17);
+
+    if (!alreadyVisible) {
+      // First reveal: no old content to fade out, just fill it in and let
+      // the existing grow-in (max-height/opacity) transition handle the
+      // rest.
+      applyZoneContent(zone, distM);
+      resultEl.classList.add("visible");
+      return;
+    }
+
+    // Switching to a different zone while the card is already open: fade
+    // the old content out, swap it, fade back in -- reads as a deliberate
+    // transition instead of a jarring instant text swap.
+    resultEl.classList.add("content-fading");
+    setTimeout(() => {
+      applyZoneContent(zone, distM);
+      resultEl.classList.remove("content-fading");
+    }, 150);
   }
 
   for (const markers of markersByZone.values()) {

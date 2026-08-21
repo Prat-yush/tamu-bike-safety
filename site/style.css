@@ -58,7 +58,9 @@ body {
 
 header {
   padding: 2rem 0 1.75rem;
-  background: var(--accent-soft);
+  background:
+    radial-gradient(900px 260px at 12% -30%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 65%),
+    linear-gradient(135deg, var(--accent-soft), var(--bg) 85%);
   border-bottom: 1px solid var(--border);
 }
 
@@ -72,6 +74,22 @@ header h1 {
   line-height: 1.2;
 }
 .tagline { margin: 0; color: var(--muted); font-size: 0.98rem; max-width: 40rem; }
+
+.stat-strip {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1.1rem;
+  flex-wrap: wrap;
+}
+.stat { display: flex; flex-direction: column; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.stat-label { font-size: 0.78rem; color: var(--muted); }
 
 main { padding-top: 1.85rem; padding-bottom: 2rem; }
 
@@ -128,6 +146,18 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
   box-shadow: var(--shadow);
 }
 
+/* Switching to a different zone (a new marker click, or locate again)
+   fades the old content out and the new content in instead of an instant
+   text swap -- toggled by JS around the DOM update. */
+.grade-badge,
+.nearest-info {
+  transition: opacity 0.15s ease;
+}
+#nearest-result.content-fading .grade-badge,
+#nearest-result.content-fading .nearest-info {
+  opacity: 0;
+}
+
 /* Small phones: badge sits above the info column, centered, instead of
    squeezing both side by side into a narrow strip. */
 @media (max-width: 420px) {
@@ -169,10 +199,14 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
   font-size: 0.9rem;
 }
 .fact-list li {
-  padding: 0.2rem 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
   border-bottom: 1px dotted var(--border);
 }
 .fact-list li:last-child { border-bottom: none; }
+.fact-list li svg { flex: none; margin-top: 0.15rem; color: var(--accent); }
 
 .caveat {
   font-size: 0.82rem;
@@ -191,6 +225,13 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
 }
 .bike-pin-icon svg {
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+  transition: transform 0.15s ease, filter 0.15s ease;
+  transform-origin: 50% 100%; /* pivot from the pin's point, not its center */
+}
+.bike-pin-icon:hover svg,
+.bike-pin-icon:active svg {
+  transform: scale(1.18) translateY(-2px);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
 }
 
 #map-section { position: relative; margin-bottom: 1.5rem; }
