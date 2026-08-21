@@ -13,6 +13,35 @@ function badgeLabel(zone) {
   return zone.status === "rated" ? zone.grade : NO_DATA_LABEL;
 }
 
+// Map-pin outline with a small bike glyph inside, tinted by grade color.
+// Built as inline SVG (no icon library / external asset) so it stays
+// self-contained. Cached per-color since there are only 7 possible colors
+// across 300+ markers.
+const _pinIconCache = new Map();
+function bikePinIcon(color) {
+  if (_pinIconCache.has(color)) return _pinIconCache.get(color);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 24 32">
+      <path d="M12 0C6.48 0 2 4.48 2 10c0 7.5 10 22 10 22s10-14.5 10-22C22 4.48 17.52 0 12 0z"
+            fill="${color}" stroke="#ffffff" stroke-width="1.3"/>
+      <g transform="translate(12,10.5)" fill="none" stroke="#ffffff"
+         stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="-4" cy="2.3" r="2.5"/>
+        <circle cx="4" cy="2.3" r="2.5"/>
+        <path d="M-4 2.3 L-0.8 -2.3 L2 -2.3 M-0.8 -2.3 L1 2.3 M2 -2.3 L4 2.3 M2 -2.3 L3.3 -3.8"/>
+      </g>
+    </svg>`;
+  const icon = L.divIcon({
+    className: "bike-pin-icon",
+    html: svg,
+    iconSize: [26, 34],
+    iconAnchor: [13, 33],
+    popupAnchor: [0, -30],
+  });
+  _pinIconCache.set(color, icon);
+  return icon;
+}
+
 function haversineM(lat1, lon1, lat2, lon2) {
   const r = 6371000;
   const p1 = lat1 * Math.PI / 180, p2 = lat2 * Math.PI / 180;
@@ -84,9 +113,7 @@ function initMap(zones, racks) {
     const [lon, lat] = f.geometry.coordinates;
     const z = zoneById[f.properties.zone_id];
     const color = z ? badgeColor(z) : "#888";
-    L.circleMarker([lat, lon], {
-      radius: 4, color, fillColor: color, fillOpacity: 0.8, weight: 1,
-    })
+    L.marker([lat, lon], { icon: bikePinIcon(color) })
       .bindPopup(z
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
