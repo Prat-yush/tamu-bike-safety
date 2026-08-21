@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T23:13:09.745367+00:00",
+  "generated_at": "2026-08-21T23:38:15.740193+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
@@ -1890,7 +1890,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 60,
       "rack_count": 4,
-      "estimated_incidents_per_40_capacity": 0.806,
+      "estimated_incidents_per_40_capacity": 0.805,
       "confidence": "high",
       "has_reports": false
     },
@@ -1935,7 +1935,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 80,
       "rack_count": 2,
-      "estimated_incidents_per_40_capacity": 0.186,
+      "estimated_incidents_per_40_capacity": 0.185,
       "confidence": "high",
       "has_reports": false
     },
