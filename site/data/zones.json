@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-08-21T06:25:16.862350+00:00",
+  "generated_at": "2026-08-21T06:48:43.224997+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
     "capacity_unit": 40,
-    "campus_wide_rate_per_40_capacity": 0.1361,
+    "campus_wide_rate_per_40_capacity": 0.136,
     "data_coverage_months": 18
   },
   "zones": [
@@ -349,7 +349,7 @@
       "weighted_incident_count": 1.38,
       "rack_capacity": 14,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 0.533,
+      "smoothed_incidents_per_40_capacity": 0.532,
       "confidence": "low",
       "has_reports": true
     },
