@@ -113,16 +113,15 @@ function initMap(zones, racks) {
     const [lon, lat] = f.geometry.coordinates;
     const z = zoneById[f.properties.zone_id];
     const color = z ? badgeColor(z) : "#888";
+    // z.status is computed fresh by score.py from that run's incident data,
+    // not hardcoded -- a zone flips from "no_reports" to "rated" on its own
+    // the moment a real incident is scraped and matched to it, no code
+    // change involved.
     L.marker([lat, lon], { icon: bikePinIcon(color) })
       .bindPopup(z
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
             ? `Zone grade: ${z.grade}<br>${z.incident_count} report(s) on file`
-            // No-data zones don't show a grade line for now -- once a zone
-            // has real report history it flips to "rated" above and gets
-            // graded normally. Kept here, not deleted, for if we later want
-            // to show something like "Zone grade: No Data" again:
-            // `Zone grade: ${NO_DATA_LABEL}<br>No reports on file`
             : `No theft history in this zone`)
         : "Rack (unzoned)")
       .addTo(map);
