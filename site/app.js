@@ -250,14 +250,9 @@ function renderLegend() {
 }
 
 async function main() {
-  const { zones, racks, generatedAt, coverageMonths } = await loadData();
+  const { zones, racks, coverageMonths } = await loadData();
   renderLegend();
   const { map, markersByZone } = initMap(zones, racks);
-
-  const lastUpdatedEl = document.getElementById("last-updated");
-  if (generatedAt) {
-    lastUpdatedEl.textContent = `Data last refreshed: ${new Date(generatedAt).toLocaleString()}`;
-  }
 
   const totalReports = zones.reduce((sum, z) => sum + (z.incident_count || 0), 0);
   animateCount(document.getElementById("stat-zones"), zones.length);
@@ -403,6 +398,22 @@ async function main() {
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  });
+
+  const reportBtn = document.getElementById("report-btn");
+  const reportModal = document.getElementById("report-modal");
+  const reportModalClose = document.getElementById("report-modal-close");
+
+  function openReportModal() { reportModal.hidden = false; }
+  function closeReportModal() { reportModal.hidden = true; }
+
+  reportBtn.addEventListener("click", openReportModal);
+  reportModalClose.addEventListener("click", closeReportModal);
+  reportModal.addEventListener("click", (e) => {
+    if (e.target === reportModal) closeReportModal(); // click on the backdrop
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !reportModal.hidden) closeReportModal();
   });
 }
 

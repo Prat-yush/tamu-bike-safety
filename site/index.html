@@ -67,14 +67,23 @@
         <strong>Always lock your bike properly regardless of zone
         grade!!</strong>
       </p>
-      <p>
+      <div class="button-row">
         <a id="safety-tips-btn" class="btn-secondary"
            href="https://transport.tamu.edu/alternative/bicycles/safety.aspx#theft"
            target="_blank" rel="noopener">Learn more about bike safety</a>
-      </p>
-      <p id="last-updated"></p>
+        <button id="report-btn" class="btn-danger" type="button">Report theft or suspicious behavior</button>
+      </div>
     </section>
   </main>
+
+  <div id="report-modal" class="modal-overlay" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
+      <h3 id="report-modal-title">Report to UPD</h3>
+      <p>Report theft or suspicious behavior around bike racks to UPD immediately
+        by calling <a href="tel:9798452345">979.845.2345</a>.</p>
+      <button id="report-modal-close" class="btn-secondary" type="button">Close</button>
+    </div>
+  </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
