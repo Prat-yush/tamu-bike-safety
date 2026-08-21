@@ -11,11 +11,9 @@ Methodology (documented here because it's a judgment call, not a fact):
   Zones are split into two tracks, not one continuous scale. "No reports"
   and "reports show low risk" are different kinds of information, and a
   single A-to-F ladder always ends up implying the first is a weaker
-  version of the second -- which isn't true. A zone with 2 racks and zero
-  reports isn't "graded A+"; it just doesn't have enough exposure for a
-  report to have happened yet.
+  version of the second -- which isn't true.
 
-  1. Zones with >=1 qualifying incident ("rated") get a letter grade:
+  1. Zones with >=1 qualifying incident ("rated") get a real letter grade:
 
      a. Recency weighting. Each qualifying incident (matched to a zone,
         within_window == True -- theft discovered within 7 days of
@@ -42,10 +40,20 @@ Methodology (documented here because it's a judgment call, not a fact):
         rated zones -- comparing "zones with a track record" against each
         other, not diluted by zones that have no track record at all.
 
-  2. Zones with zero qualifying incidents ("unrated") get no letter grade.
-     Instead: status "no_reports" plus the same capacity-based confidence
-     tier, so the frontend can say e.g. "large rack area, no reports" vs
-     "very few racks, limited data" without implying a verdict.
+  2. Zones with zero qualifying incidents ("no_reports") get an ESTIMATED
+     letter grade instead of no grade at all: inverse-distance-weighted
+     average of the smoothed_rate of the nearest rated zones within
+     NEIGHBOR_MAX_M, mapped through the same grade bands as real zones (by
+     interpolating where that rate would fall in the rated distribution --
+     never by averaging letter grades themselves, which is lossy). A zone
+     with no rated neighbor within range falls back to the flat
+     campus-wide rate. Either way the zone keeps status "no_reports" and
+     estimated: true, and its own confidence tier reflects how good the
+     *estimate* is (how many/how close the real neighbors were) -- not
+     reused from the capacity-based tier, since there's no "own" evidence
+     behind an estimate at all. The frontend must render these distinctly
+     (lower opacity, a "~" prefix) and say plainly that they're inferred,
+     not measured -- an estimated grade is not a report.
 
   Small absolute sample size (dozens of incidents total across ~90 zones)
   means rated grades are still directional, not statistically precise --
@@ -53,17 +61,23 @@ Methodology (documented here because it's a judgment call, not a fact):
   unsafe" any more than "no reports" means "verified safe."
 """
 
+import bisect
 import csv
 import json
+import math
 from datetime import datetime, timezone
 from pathlib import Path
 
 HERE = Path(__file__).parent
 SITE_DATA = HERE.parent / "site" / "data"
 
-CAPACITY_UNIT = 40          # "one unit" of rack capacity, for readable rates
+CAPACITY_UNIT = 40           # "one unit" of rack capacity, for readable rates
 RECENCY_HALFLIFE_DAYS = 365  # a 1-year-old incident counts for half as much
 PRIOR_STRENGTH = 3.0         # shrinkage strength, in capacity units
+
+NEIGHBOR_K = 3         # consider up to this many nearest rated zones
+NEIGHBOR_MAX_M = 600   # ...but only within this radius; beyond it, use the campus average
+NEIGHBOR_SOFTEN_M = 25  # avoids a near-zero distance producing a runaway weight
 
 GRADE_BANDS = [
     (0.15, "A+"), (0.30, "A"), (0.50, "B"), (0.70, "C"), (0.85, "D"), (1.01, "F"),
@@ -77,15 +91,46 @@ def grade_for_percentile(p):
     return "F"
 
 
+def grade_for_rate(rate, sorted_rates):
+    """Where would this rate fall among the real rated zones? Reuses the
+    exact same bands, so an estimated "B" means the same thing a real "B"
+    does -- just measured on borrowed evidence."""
+    if not sorted_rates:
+        return "C"  # degenerate: no rated zones exist campus-wide yet
+    idx = bisect.bisect_left(sorted_rates, rate)
+    percentile = (idx + 1) / len(sorted_rates)
+    return grade_for_percentile(percentile)
+
+
 def confidence_tier(units):
-    """How much evidence (capacity) backs this zone's number, relative to
-    the shrinkage prior -- used for both rated and unrated zones so the
-    frontend can flag thin-data zones instead of implying false precision."""
+    """How much evidence (capacity) backs a RATED zone's own number,
+    relative to the shrinkage prior -- not used for estimated zones, which
+    have their own neighbor-based tiering (see estimate_confidence)."""
     if units < PRIOR_STRENGTH:
         return "low"
     if units < 3 * PRIOR_STRENGTH:
         return "medium"
     return "high"
+
+
+def estimate_confidence(neighbors):
+    """Confidence in an ESTIMATED grade: about how good the borrowed
+    evidence is (count + proximity of real rated neighbors), not about the
+    zone's own capacity, since there's no "own" evidence at all here."""
+    if not neighbors:
+        return "low"
+    if len(neighbors) >= 2 and neighbors[0][0] <= 300:
+        return "high"
+    return "medium"
+
+
+def haversine_m(lat1, lon1, lat2, lon2):
+    r = 6371000.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlmb = math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlmb / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
 
 
 def incident_date(row):
@@ -151,7 +196,7 @@ def main():
 
     # Campus-wide average rate (over ALL scored zones, rated or not) --
     # this is the true population rate, used as the shrinkage target for
-    # rated zones below.
+    # rated zones and as the no-nearby-neighbor fallback for estimates.
     total_weighted = sum(weighted_by_zone.get(zid, 0.0) for zid in scored_zones)
     total_units = sum(capacity_by_zone[zid] / CAPACITY_UNIT for zid in scored_zones)
     global_rate = total_weighted / total_units if total_units else 0.0
@@ -176,6 +221,8 @@ def main():
         percentile = (i + 1) / n if n else 0
         t["grade"] = grade_for_percentile(percentile)
 
+    rated_sorted_rates = [t["smoothed_rate"] for t in rated]  # already ascending
+
     out = []
     for t in rated:
         z = zone_defs[t["zid"]]
@@ -186,6 +233,7 @@ def main():
             "lon": z["lon"],
             "status": "rated",
             "grade": t["grade"],
+            "estimated": False,
             "incident_count": t["incidents_n"],
             "weighted_incident_count": round(t["weighted"], 2),
             "rack_capacity": t["capacity"],
@@ -198,20 +246,45 @@ def main():
     for zid in unrated_zids:
         z = zone_defs[zid]
         capacity = capacity_by_zone[zid]
-        units = capacity / CAPACITY_UNIT
+
+        neighbors = []
+        for t in rated:
+            rz = zone_defs[t["zid"]]
+            d = haversine_m(z["lat"], z["lon"], rz["lat"], rz["lon"])
+            if d <= NEIGHBOR_MAX_M:
+                neighbors.append((d, t["zid"], t["smoothed_rate"]))
+        neighbors.sort(key=lambda t: t[0])
+        neighbors = neighbors[:NEIGHBOR_K]
+
+        if neighbors:
+            weights = [1 / (d + NEIGHBOR_SOFTEN_M) for d, _, _ in neighbors]
+            total_w = sum(weights)
+            estimated_rate = sum(w * rate for w, (_, _, rate) in zip(weights, neighbors)) / total_w
+            basis = {
+                "method": "nearby_zones",
+                "neighbor_zone_ids": [zid2 for _, zid2, _ in neighbors],
+                "neighbor_count": len(neighbors),
+                "nearest_neighbor_m": round(neighbors[0][0]),
+            }
+        else:
+            estimated_rate = global_rate
+            basis = {"method": "campus_average", "neighbor_count": 0}
+
         out.append({
             "id": zid,
             "name": z["name"],
             "lat": z["lat"],
             "lon": z["lon"],
             "status": "no_reports",
-            "grade": None,
+            "grade": grade_for_rate(estimated_rate, rated_sorted_rates),
+            "estimated": True,
+            "estimate_basis": basis,
             "incident_count": 0,
             "weighted_incident_count": 0.0,
             "rack_capacity": capacity,
             "rack_count": rack_count_by_zone.get(zid, 0),
-            "smoothed_incidents_per_40_capacity": None,
-            "confidence": confidence_tier(units),
+            "estimated_incidents_per_40_capacity": round(estimated_rate, 3),
+            "confidence": estimate_confidence(neighbors),
             "has_reports": False,
         })
 
@@ -229,6 +302,8 @@ def main():
             "capacity_unit": CAPACITY_UNIT,
             "campus_wide_rate_per_40_capacity": round(global_rate, 4),
             "data_coverage_months": data_coverage_months,
+            "neighbor_max_m": NEIGHBOR_MAX_M,
+            "neighbor_k": NEIGHBOR_K,
         },
         "zones": out,
     }
@@ -236,10 +311,13 @@ def main():
 
     dist = {}
     for z in out:
-        dist[z["grade"] or "no_reports"] = dist.get(z["grade"] or "no_reports", 0) + 1
+        key = f"{z['grade']}{'~' if z['estimated'] else ''}"
+        dist[key] = dist.get(key, 0) + 1
+    fallback_n = sum(1 for z in out if z.get("estimate_basis", {}).get("method") == "campus_average")
     print(f"{len(out)} zones scored -> {SITE_DATA / 'zones.json'}")
-    print(f"  rated: {len(rated)}   no_reports: {len(unrated_zids)}")
-    print(f"  distribution: {dist}")
+    print(f"  rated: {len(rated)}   estimated: {len(unrated_zids)} "
+          f"({fallback_n} with no rated neighbor in range, used campus average)")
+    print(f"  distribution (grade, ~ = estimated): {dist}")
     print(f"  campus-wide rate: {global_rate:.3f} incidents / 40 capacity")
 
 

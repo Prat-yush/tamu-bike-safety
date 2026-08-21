@@ -5,26 +5,33 @@ const GRADE_COLOR = {
   "C": "#b45309", "D": "#c2410c", "F": "#b91c1c",
 };
 const WARNING_GRADES = new Set(["C", "D", "F"]);
-const NO_DATA_COLOR = "#64748b"; // neutral slate -- deliberately off the red/green scale
+const NO_DATA_COLOR = "#64748b"; // fallback only -- every zone gets a real (possibly estimated) grade now
 const NO_DATA_LABEL = "No Data";
 
 function badgeColor(zone) {
-  return zone.status === "rated" ? (GRADE_COLOR[zone.grade] || "#888") : NO_DATA_COLOR;
+  return GRADE_COLOR[zone.grade] || NO_DATA_COLOR;
 }
 
+// "~" flags an estimated grade at a glance, everywhere a grade is shown --
+// paired with reduced-opacity pins on the map (see bikePinIcon) and plain
+// language in the card/popup text.
 function badgeLabel(zone) {
-  return zone.status === "rated" ? zone.grade : NO_DATA_LABEL;
+  if (!zone.grade) return NO_DATA_LABEL;
+  return zone.estimated ? `~${zone.grade}` : zone.grade;
 }
 
 // Map-pin outline with a small bike glyph inside, tinted by grade color.
 // Built as inline SVG (no icon library / external asset) so it stays
-// self-contained. Cached per-color since there are only 7 possible colors
-// across 300+ markers.
+// self-contained. Estimated zones render at reduced opacity so a "~F"
+// doesn't read the same as a real, reported F at a glance. Cached per
+// color+estimated pair (14 possible combos across 300+ markers).
 const _pinIconCache = new Map();
-function bikePinIcon(color) {
-  if (_pinIconCache.has(color)) return _pinIconCache.get(color);
+function bikePinIcon(color, estimated) {
+  const cacheKey = `${color}|${estimated}`;
+  if (_pinIconCache.has(cacheKey)) return _pinIconCache.get(cacheKey);
+  const opacity = estimated ? 0.55 : 1;
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 24 32">
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="34" viewBox="0 0 24 32" opacity="${opacity}">
       <path d="M12 0C6.48 0 2 4.48 2 10c0 7.5 10 22 10 22s10-14.5 10-22C22 4.48 17.52 0 12 0z"
             fill="${color}" stroke="#ffffff" stroke-width="1.3"/>
       <g transform="translate(12,10.5)" fill="none" stroke="#ffffff"
@@ -41,7 +48,7 @@ function bikePinIcon(color) {
     iconAnchor: [13, 33],
     popupAnchor: [0, -30],
   });
-  _pinIconCache.set(color, icon);
+  _pinIconCache.set(cacheKey, icon);
   return icon;
 }
 
@@ -93,16 +100,25 @@ function coveragePhrase(months) {
   return months < 1 ? "the past month" : `the past ${months} months`;
 }
 
+function estimateBasisPhrase(z) {
+  const b = z.estimate_basis || {};
+  if (b.method === "nearby_zones") {
+    return `Estimated from ${b.neighbor_count} nearby zone${b.neighbor_count === 1 ? "" : "s"} ` +
+      `(closest ${distanceText(b.nearest_neighbor_m)})`;
+  }
+  return "Estimated from the campus-wide average -- no nearby zones have data either";
+}
+
 // Short fact lines for the nearest-zone card. Deliberately terse -- one
 // clause per line, no sentences -- with the "not a guarantee" caveat
 // handled once, outside this list, rather than repeated per zone.
 function zoneFacts(z, coverageMonths) {
   const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"} ` +
     `in ${coveragePhrase(coverageMonths)}`;
-  const basisLine = z.status === "rated"
-    ? "Grade is based on thefts reported at racks in this zone"
-    : "Not enough reports to grade this zone";
-  return [theftLine, basisLine];
+  if (z.status === "rated") {
+    return [theftLine, "Grade is based on thefts reported at racks in this zone"];
+  }
+  return [theftLine, "No reports for this exact zone -- grade is estimated, not measured", estimateBasisPhrase(z)];
 }
 
 async function loadData() {
@@ -142,12 +158,12 @@ function initMap(zones, racks) {
     // not hardcoded -- a zone flips from "no_reports" to "rated" on its own
     // the moment a real incident is scraped and matched to it, no code
     // change involved.
-    const marker = L.marker([lat, lon], { icon: bikePinIcon(color) })
+    const marker = L.marker([lat, lon], { icon: bikePinIcon(color, z && z.estimated) })
       .bindPopup(z
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
             ? `Zone grade: ${z.grade}<br>${z.incident_count} report(s) on file`
-            : `No theft history in this zone`)
+            : `Zone grade: ~${z.grade} (estimated)<br>No reports for this zone`)
         : "Rack (unzoned)")
       .addTo(map);
 
@@ -193,8 +209,12 @@ function renderLegend() {
   const gradeItems = Object.entries(GRADE_COLOR)
     .map(([g, c]) => `<span class="legend-item"><i style="background:${c}"></i>${g}</span>`)
     .join("");
-  const noDataItem = `<span class="legend-item"><i style="background:${NO_DATA_COLOR}"></i>${NO_DATA_LABEL}</span>`;
-  el.innerHTML = gradeItems + noDataItem;
+  // Every zone gets a real or estimated grade now -- there's no color left
+  // that means "no data," so the key just needs to explain the one visual
+  // distinction that still exists: faded pin = estimated, not reported.
+  const estimatedItem = `<span class="legend-item">` +
+    `<i style="background:${NO_DATA_COLOR};opacity:0.55"></i>~ Estimated</span>`;
+  el.innerHTML = gradeItems + estimatedItem;
 }
 
 async function main() {
@@ -215,6 +235,7 @@ async function main() {
   const distanceEl = document.getElementById("nearest-distance");
   const factsEl = document.getElementById("nearest-facts");
   const warningEl = document.getElementById("theft-warning");
+  const warningTextEl = document.getElementById("theft-warning-text");
 
   let lastCoords = null;
   let userMarker = null;
@@ -258,8 +279,14 @@ async function main() {
     factsEl.innerHTML = zoneFacts(zone, coverageMonths)
       .map(f => `<li>${f}</li>`).join("");
 
-    const showWarning = zone.status === "rated" && WARNING_GRADES.has(zone.grade);
+    const showWarning = WARNING_GRADES.has(zone.grade);
     warningEl.hidden = !showWarning;
+    if (showWarning) {
+      warningTextEl.textContent = zone.estimated
+        ? `This zone's grade is estimated at ${zone.grade} based on nearby areas -- ` +
+          `no thefts have been reported here specifically, but be extra careful.`
+        : `This zone has had a history of bike thefts. Please be extra careful!`;
+    }
 
     highlightZoneRacks(zone.id, markersByZone);
     if (pan) map.setView([zone.lat, zone.lon], 17);

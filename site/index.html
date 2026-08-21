@@ -28,7 +28,7 @@
           <p id="nearest-distance" class="muted-small"></p>
           <ul id="nearest-facts" class="fact-list"></ul>
           <div id="theft-warning" class="warning-box" hidden>
-            <p>This zone has had a history of bike thefts. Please be extra careful!</p>
+            <p id="theft-warning-text"></p>
           </div>
           <p class="caveat"><strong>Important:</strong> this information is based on
             historical reports only and does not guarantee safety.</p>
@@ -49,12 +49,15 @@
         stolen electric bikes and scooters (a Clery Act requirement). This
         site uses those alerts, matches each reported location to the
         nearest defined campus bike-rack zone, and scores it one of two
-        ways. Zones with at least one qualifying report get a letter grade,
-        A+ to F, weighing recent reports more than older ones and blending
-        each zone's own history with the campus-wide average based on how
-        much rack capacity (i.e. how much evidence) that zone has. Zones
-        with zero reports get no letter grade at all, just a neutral
-        <strong>"No Data"</strong> label.
+        ways. Zones with at least one qualifying report get a real letter
+        grade, A+ to F, weighing recent reports more than older ones and
+        blending each zone's own history with the campus-wide average based
+        on how much rack capacity (i.e. how much evidence) that zone has.
+        Zones with zero reports get an <strong>estimated</strong> grade
+        instead &mdash; shown with a "~" and a lighter map pin &mdash;
+        based on nearby zones that do have reports, since a zone with no
+        reports of its own isn't necessarily any safer than the area around
+        it.
       </p>
       <p>
         <strong>Always lock your bike properly regardless of zone
