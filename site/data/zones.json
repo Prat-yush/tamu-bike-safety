@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T06:16:54.404826+00:00",
+  "generated_at": "2026-08-21T06:25:16.862350+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
@@ -316,7 +316,7 @@
       "status": "rated",
       "grade": "D",
       "incident_count": 1,
-      "weighted_incident_count": 0.79,
+      "weighted_incident_count": 0.78,
       "rack_capacity": 30,
       "rack_count": 2,
       "smoothed_incidents_per_40_capacity": 0.318,
@@ -406,7 +406,7 @@
       "status": "rated",
       "grade": "F",
       "incident_count": 7,
-      "weighted_incident_count": 4.44,
+      "weighted_incident_count": 4.43,
       "rack_capacity": 10,
       "rack_count": 1,
       "smoothed_incidents_per_40_capacity": 1.49,
