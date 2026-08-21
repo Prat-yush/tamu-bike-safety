@@ -188,15 +188,15 @@ main {
 
 @keyframes pin-glow-pulse {
   0%, 100% {
-    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px #ffd633);
+    filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 3px #ffd633);
     transform: scale(1);
   }
   50% {
-    filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 14px #ffd633);
-    transform: scale(1.3);
+    filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px #ffd633);
+    transform: scale(1.1);
   }
 }
 .pin-glow svg {
-  animation: pin-glow-pulse 0.9s ease-in-out infinite;
+  animation: pin-glow-pulse 1.8s ease-in-out infinite;
   transform-origin: 50% 100%; /* pivot from the pin's point, not its center */
 }
