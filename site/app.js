@@ -130,6 +130,7 @@ function initMap(zones, racks) {
       .addTo(map);
 
     if (z) {
+      marker._zone = z; // read by main()'s click handler to update the card
       if (!markersByZone.has(z.id)) markersByZone.set(z.id, []);
       markersByZone.get(z.id).push(marker);
     }
@@ -212,15 +213,19 @@ async function main() {
   let lastCoords = null;
   let currentZone = null;
 
-  function showZone(zone, distM) {
+  // distM is null when there's no reference point to measure from yet
+  // (e.g. a rack was clicked directly before the visitor ever located
+  // themselves). pan controls whether the map recenters -- skipped for a
+  // direct marker click since the visitor already navigated there.
+  function showZone(zone, distM, { pan = true } = {}) {
     currentZone = zone;
-    resultEl.hidden = false;
+    resultEl.classList.add("visible");
     const label = badgeLabel(zone);
     gradeEl.textContent = label;
     gradeEl.style.background = badgeColor(zone);
     gradeEl.style.fontSize = label.length > 2 ? "0.75rem" : "1.5rem";
     nameEl.textContent = zone.name;
-    distanceEl.textContent = distanceText(distM);
+    distanceEl.textContent = distM != null ? distanceText(distM) : "";
     factsEl.innerHTML = zoneFacts(zone, coverageMonths)
       .map(f => `<li>${f}</li>`).join("");
 
@@ -229,7 +234,19 @@ async function main() {
     saferResultEl.textContent = "";
 
     highlightZoneRacks(zone.id, markersByZone);
-    map.setView([zone.lat, zone.lon], 17);
+    if (pan) map.setView([zone.lat, zone.lon], 17);
+  }
+
+  for (const markers of markersByZone.values()) {
+    for (const marker of markers) {
+      marker.on("click", () => {
+        const zone = marker._zone;
+        const distM = lastCoords
+          ? haversineM(lastCoords.lat, lastCoords.lon, zone.lat, zone.lon)
+          : null;
+        showZone(zone, distM, { pan: false });
+      });
+    }
   }
 
   btn.addEventListener("click", () => {

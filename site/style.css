@@ -56,14 +56,29 @@ main {
 
 #locate-status { color: var(--muted); }
 
+/* Collapsed by default (not just hidden -- animatable). display:flex here
+   would otherwise beat the [hidden] UA rule on specificity and show an
+   empty box before the first click. */
 #nearest-result {
   display: flex;
   gap: 1rem;
   align-items: center;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  padding: 0 1rem;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.35s ease,
+              margin-top 0.35s ease, padding 0.35s ease;
+}
+#nearest-result.visible {
+  max-height: 20rem;
+  opacity: 1;
   margin-top: 1rem;
   padding: 1rem;
-  border: 1px solid var(--border);
-  border-radius: 10px;
+  border-color: var(--border);
 }
 
 .grade-badge {
