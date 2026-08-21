@@ -31,38 +31,33 @@ function nearestZone(lat, lon, zones) {
   return { zone: best, distM: bestD };
 }
 
-const CONFIDENCE_NOTE_RATED = {
-  low: "This area has very few racks, so the grade is mostly the campus " +
-    "average rather than this area's own track record.",
-  medium: "This area has a moderate amount of data behind its grade.",
-  high: "This area has enough rack capacity that its grade mostly reflects " +
-    "its own report history, not the campus average.",
-};
-const CONFIDENCE_NOTE_NO_REPORTS = {
-  low: "This area also has very few racks, so a zero-report history here " +
-    "doesn't say much either way.",
-  medium: "This area has a moderate number of racks, so a zero-report " +
-    "history carries some weight.",
-  high: "This area has enough racks that a zero-report history over time " +
-    "is a reasonably meaningful signal, though still not a guarantee.",
-};
+function distanceText(distM) {
+  return distM < 1000 ? `${Math.round(distM)} m away` : `${(distM / 1000).toFixed(1)} km away`;
+}
 
-function describeZone(z, distM) {
-  const distText = distM < 1000
-    ? `${Math.round(distM)} m away`
-    : `${(distM / 1000).toFixed(1)} km away`;
-  const rackText = `${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ${z.rack_capacity} capacity`;
-  if (z.status !== "rated") {
-    const confidenceText = CONFIDENCE_NOTE_NO_REPORTS[z.confidence] || "";
-    return `${distText}. No bike theft reports have been matched to this area ` +
-      `in the data collected so far (${rackText}). That could mean it's genuinely ` +
-      `low-risk, or just that nothing's been reported yet -- there's no way to ` +
-      `tell the difference from this data alone, so it isn't given a grade. ${confidenceText}`;
-  }
-  const confidenceText = CONFIDENCE_NOTE_RATED[z.confidence] || "";
-  return `${distText}. ${z.incident_count} qualifying report` +
-    `${z.incident_count === 1 ? "" : "s"} matched to this area (${rackText}), ` +
-    `weighted toward recent ones. ${confidenceText}`;
+function coverageText(months) {
+  if (!months && months !== 0) return "unknown";
+  return months < 1 ? "<1 month" : `${months} month${months === 1 ? "" : "s"}`;
+}
+
+function capitalize(s) {
+  return s ? s[0].toUpperCase() + s.slice(1) : s;
+}
+
+// Short fact lines for the nearest-zone card. Deliberately terse -- one
+// clause per line, no sentences -- with the "not a guarantee" caveat
+// handled once, outside this list, rather than repeated per zone.
+function zoneFacts(z, coverageMonths) {
+  const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"}`;
+  const basisLine = z.status === "rated"
+    ? "Grade is based on thefts reported at racks in this area"
+    : "Not enough reports to grade this area";
+  return [
+    theftLine,
+    `Data coverage: ${coverageText(coverageMonths)}`,
+    basisLine,
+    `Confidence: ${capitalize(z.confidence)}`,
+  ];
 }
 
 async function loadData() {
@@ -74,6 +69,7 @@ async function loadData() {
   return {
     zones: zonesPayload.zones,
     generatedAt: zonesPayload.generated_at,
+    coverageMonths: zonesPayload.methodology && zonesPayload.methodology.data_coverage_months,
     racks: await racksRes.json(),
   };
 }
@@ -121,7 +117,7 @@ function renderLegend() {
 }
 
 async function main() {
-  const { zones, racks, generatedAt } = await loadData();
+  const { zones, racks, generatedAt, coverageMonths } = await loadData();
   renderLegend();
   const map = initMap(zones, racks);
 
@@ -135,7 +131,8 @@ async function main() {
   const resultEl = document.getElementById("nearest-result");
   const gradeEl = document.getElementById("nearest-grade");
   const nameEl = document.getElementById("nearest-name");
-  const detailEl = document.getElementById("nearest-detail");
+  const distanceEl = document.getElementById("nearest-distance");
+  const factsEl = document.getElementById("nearest-facts");
 
   btn.addEventListener("click", () => {
     if (!("geolocation" in navigator)) {
@@ -158,7 +155,9 @@ async function main() {
         gradeEl.style.background = badgeColor(zone);
         gradeEl.style.fontSize = label.length > 2 ? "0.75rem" : "1.5rem";
         nameEl.textContent = zone.name;
-        detailEl.textContent = describeZone(zone, distM);
+        distanceEl.textContent = distanceText(distM);
+        factsEl.innerHTML = zoneFacts(zone, coverageMonths)
+          .map(f => `<li>${f}</li>`).join("");
         map.setView([zone.lat, zone.lon], 17);
       },
       (err) => {

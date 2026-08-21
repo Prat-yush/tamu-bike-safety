@@ -128,6 +128,16 @@ def main():
         rack_count_by_zone[zid] = rack_count_by_zone.get(zid, 0) + 1
 
     incidents = list(csv.DictReader(open(HERE / "incidents_zoned.csv", encoding="utf-8")))
+
+    # How far back the underlying alert data actually goes -- shown to
+    # users alongside every grade so "0 reports" reads as "0 reports in
+    # N months of records," not an unqualified verdict.
+    all_dates = [d for d in (incident_date(r) for r in incidents) if d]
+    earliest = min(all_dates) if all_dates else now
+    if earliest.tzinfo is None:
+        earliest = earliest.replace(tzinfo=timezone.utc)
+    data_coverage_months = round((now - earliest).days / 30.44)
+
     raw_count_by_zone, weighted_by_zone = {}, {}
     for r in incidents:
         zid = r.get("zone_id")
@@ -218,6 +228,7 @@ def main():
             "prior_strength_capacity_units": PRIOR_STRENGTH,
             "capacity_unit": CAPACITY_UNIT,
             "campus_wide_rate_per_40_capacity": round(global_rate, 4),
+            "data_coverage_months": data_coverage_months,
         },
         "zones": out,
     }

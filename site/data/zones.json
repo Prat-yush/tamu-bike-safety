@@ -1,10 +1,11 @@
 {
-  "generated_at": "2026-08-21T04:39:58.924905+00:00",
+  "generated_at": "2026-08-21T04:50:23.573011+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
     "capacity_unit": 40,
-    "campus_wide_rate_per_40_capacity": 0.1361
+    "campus_wide_rate_per_40_capacity": 0.1361,
+    "data_coverage_months": 18
   },
   "zones": [
     {

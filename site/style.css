@@ -82,8 +82,28 @@ main {
   padding: 0.25rem;
 }
 
-.nearest-info h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+.nearest-info h2 { margin: 0 0 0.15rem; font-size: 1.1rem; }
 .nearest-info p { margin: 0; color: var(--muted); }
+.muted-small { font-size: 0.85rem; margin-bottom: 0.5rem !important; }
+
+.fact-list {
+  list-style: none;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  font-size: 0.9rem;
+}
+.fact-list li {
+  padding: 0.15rem 0;
+  border-bottom: 1px dotted var(--border);
+}
+.fact-list li:last-child { border-bottom: none; }
+
+.caveat {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--muted);
+  opacity: 0.85;
+}
 
 #map-section { position: relative; margin-bottom: 1.5rem; }
 #map {
