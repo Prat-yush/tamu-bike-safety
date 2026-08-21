@@ -164,6 +164,20 @@ main {
 #about h2 { color: var(--fg); font-size: 1.1rem; }
 #last-updated { font-size: 0.85rem; }
 
+.btn-secondary {
+  display: inline-block;
+  background: none;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+
 .warning-box {
   margin: 0 0 0.6rem;
   padding: 0.55rem 0.7rem;
