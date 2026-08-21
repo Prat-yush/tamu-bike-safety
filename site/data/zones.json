@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-21T07:15:03.501213+00:00",
+  "generated_at": "2026-08-21T19:01:14.430855+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
     "capacity_unit": 40,
-    "campus_wide_rate_per_40_capacity": 0.136,
-    "data_coverage_months": 18
+    "campus_wide_rate_per_40_capacity": 0.1359,
+    "data_coverage_months": 19
   },
   "zones": [
     {
@@ -124,7 +124,7 @@
       "weighted_incident_count": 0.84,
       "rack_capacity": 320,
       "rack_count": 5,
-      "smoothed_incidents_per_40_capacity": 0.114,
+      "smoothed_incidents_per_40_capacity": 0.113,
       "confidence": "medium",
       "has_reports": true
     },
@@ -184,7 +184,7 @@
       "weighted_incident_count": 1.35,
       "rack_capacity": 340,
       "rack_count": 4,
-      "smoothed_incidents_per_40_capacity": 0.153,
+      "smoothed_incidents_per_40_capacity": 0.152,
       "confidence": "medium",
       "has_reports": true
     },
@@ -334,7 +334,7 @@
       "weighted_incident_count": 0.88,
       "rack_capacity": 6,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 0.409,
+      "smoothed_incidents_per_40_capacity": 0.408,
       "confidence": "low",
       "has_reports": true
     },
@@ -346,7 +346,7 @@
       "status": "rated",
       "grade": "F",
       "incident_count": 2,
-      "weighted_incident_count": 1.38,
+      "weighted_incident_count": 1.37,
       "rack_capacity": 14,
       "rack_count": 1,
       "smoothed_incidents_per_40_capacity": 0.532,
@@ -364,7 +364,7 @@
       "weighted_incident_count": 3.4,
       "rack_capacity": 75,
       "rack_count": 22,
-      "smoothed_incidents_per_40_capacity": 0.782,
+      "smoothed_incidents_per_40_capacity": 0.781,
       "confidence": "low",
       "has_reports": true
     },
@@ -376,10 +376,10 @@
       "status": "rated",
       "grade": "F",
       "incident_count": 18,
-      "weighted_incident_count": 13.12,
+      "weighted_incident_count": 13.11,
       "rack_capacity": 370,
       "rack_count": 5,
-      "smoothed_incidents_per_40_capacity": 1.104,
+      "smoothed_incidents_per_40_capacity": 1.103,
       "confidence": "high",
       "has_reports": true
     },
@@ -394,7 +394,7 @@
       "weighted_incident_count": 3.71,
       "rack_capacity": 10,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 1.268,
+      "smoothed_incidents_per_40_capacity": 1.267,
       "confidence": "low",
       "has_reports": true
     },
@@ -409,7 +409,7 @@
       "weighted_incident_count": 4.43,
       "rack_capacity": 10,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 1.49,
+      "smoothed_incidents_per_40_capacity": 1.489,
       "confidence": "low",
       "has_reports": true
     },
