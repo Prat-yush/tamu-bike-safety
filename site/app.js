@@ -275,23 +275,40 @@ async function main() {
     }
   }
 
+  function locateNearest(lat, lon) {
+    const { zone, distM } = nearestZone(lat, lon, zones);
+    if (!zone) {
+      status.textContent = "No bike rack zones found.";
+      return;
+    }
+    status.textContent = "";
+    showZone(zone, distM);
+  }
+
   btn.addEventListener("click", () => {
     if (!("geolocation" in navigator)) {
       status.textContent = "Your browser doesn't support geolocation.";
       return;
     }
+
+    // Already tracking a live fix (from watchPosition, started below after
+    // the first successful locate) -- reuse it instead of firing a brand
+    // new getCurrentPosition. Some browsers only grant geolocation as a
+    // one-time permission; a second fresh request can come back
+    // PERMISSION_DENIED even while the original watch is still happily
+    // delivering updates, which read as a confusing "access denied" bug
+    // on the second click.
+    if (lastCoords) {
+      locateNearest(lastCoords.lat, lastCoords.lon);
+      return;
+    }
+
     status.textContent = "Locating…";
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
         updateUserMarker(latitude, longitude);
-        const { zone, distM } = nearestZone(latitude, longitude, zones);
-        if (!zone) {
-          status.textContent = "No bike rack zones found.";
-          return;
-        }
-        status.textContent = "";
-        showZone(zone, distM);
+        locateNearest(latitude, longitude);
         startWatchingLocation();
       },
       (err) => {
