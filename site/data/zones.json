@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T18:35:46.217459+00:00",
+  "generated_at": "2026-08-21T22:43:38.587273+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
@@ -195,7 +195,7 @@
       "grade": "B",
       "estimated": false,
       "incident_count": 2,
-      "weighted_incident_count": 1.35,
+      "weighted_incident_count": 1.34,
       "rack_capacity": 340,
       "rack_count": 4,
       "smoothed_incidents_per_40_capacity": 0.152,
@@ -403,7 +403,7 @@
       "grade": "F",
       "estimated": false,
       "incident_count": 18,
-      "weighted_incident_count": 13.11,
+      "weighted_incident_count": 13.1,
       "rack_capacity": 370,
       "rack_count": 5,
       "smoothed_incidents_per_40_capacity": 1.103,
@@ -422,7 +422,7 @@
       "weighted_incident_count": 3.71,
       "rack_capacity": 10,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 1.267,
+      "smoothed_incidents_per_40_capacity": 1.266,
       "confidence": "low",
       "has_reports": true
     },
@@ -438,7 +438,7 @@
       "weighted_incident_count": 4.43,
       "rack_capacity": 10,
       "rack_count": 1,
-      "smoothed_incidents_per_40_capacity": 1.489,
+      "smoothed_incidents_per_40_capacity": 1.488,
       "confidence": "low",
       "has_reports": true
     },
@@ -1152,7 +1152,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 10,
       "rack_count": 1,
-      "estimated_incidents_per_40_capacity": 1.267,
+      "estimated_incidents_per_40_capacity": 1.266,
       "confidence": "medium",
       "has_reports": false
     },
@@ -1411,7 +1411,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 280,
       "rack_count": 2,
-      "estimated_incidents_per_40_capacity": 0.524,
+      "estimated_incidents_per_40_capacity": 0.523,
       "confidence": "high",
       "has_reports": false
     },
@@ -1689,7 +1689,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 20,
       "rack_count": 1,
-      "estimated_incidents_per_40_capacity": 1.267,
+      "estimated_incidents_per_40_capacity": 1.266,
       "confidence": "medium",
       "has_reports": false
     },
@@ -1959,7 +1959,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 2,
       "rack_count": 1,
-      "estimated_incidents_per_40_capacity": 1.267,
+      "estimated_incidents_per_40_capacity": 1.266,
       "confidence": "medium",
       "has_reports": false
     },
@@ -1984,7 +1984,7 @@
       "weighted_incident_count": 0.0,
       "rack_capacity": 150,
       "rack_count": 1,
-      "estimated_incidents_per_40_capacity": 0.691,
+      "estimated_incidents_per_40_capacity": 0.69,
       "confidence": "medium",
       "has_reports": false
     }
