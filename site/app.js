@@ -35,29 +35,21 @@ function distanceText(distM) {
   return distM < 1000 ? `${Math.round(distM)} m away` : `${(distM / 1000).toFixed(1)} km away`;
 }
 
-function coverageText(months) {
-  if (!months && months !== 0) return "unknown";
-  return months < 1 ? "<1 month" : `${months} month${months === 1 ? "" : "s"}`;
-}
-
-function capitalize(s) {
-  return s ? s[0].toUpperCase() + s.slice(1) : s;
+function coveragePhrase(months) {
+  if (!months && months !== 0) return "the data collected so far";
+  return months < 1 ? "the past month" : `the past ${months} months`;
 }
 
 // Short fact lines for the nearest-zone card. Deliberately terse -- one
 // clause per line, no sentences -- with the "not a guarantee" caveat
 // handled once, outside this list, rather than repeated per zone.
 function zoneFacts(z, coverageMonths) {
-  const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"}`;
+  const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"} ` +
+    `in ${coveragePhrase(coverageMonths)}`;
   const basisLine = z.status === "rated"
     ? "Grade is based on thefts reported at racks in this area"
     : "Not enough reports to grade this area";
-  return [
-    theftLine,
-    `Data coverage: ${coverageText(coverageMonths)}`,
-    basisLine,
-    `Confidence: ${capitalize(z.confidence)}`,
-  ];
+  return [theftLine, basisLine];
 }
 
 async function loadData() {

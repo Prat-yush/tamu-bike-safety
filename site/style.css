@@ -99,11 +99,14 @@ main {
 .fact-list li:last-child { border-bottom: none; }
 
 .caveat {
-  font-size: 0.78rem;
-  font-style: italic;
-  color: var(--muted);
-  opacity: 0.85;
+  font-size: 0.82rem;
+  color: var(--fg);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  padding: 0.5rem 0.65rem;
+  border-radius: 0 6px 6px 0;
 }
+.caveat strong { color: var(--accent); }
 
 #map-section { position: relative; margin-bottom: 1.5rem; }
 #map {
