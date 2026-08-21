@@ -1,9 +1,11 @@
+// Tailwind 600/700-tier hues -- modern and friendly but dark enough for
+// reliable contrast under the white badge/marker text drawn on top of them.
 const GRADE_COLOR = {
-  "A+": "#1a7f37", "A": "#3fb950", "B": "#9ecb3c",
-  "C": "#d4a72c", "D": "#e8590c", "F": "#cf222e",
+  "A+": "#15803d", "A": "#16a34a", "B": "#65a30d",
+  "C": "#b45309", "D": "#c2410c", "F": "#b91c1c",
 };
 const WARNING_GRADES = new Set(["C", "D", "F"]);
-const NO_DATA_COLOR = "#6e7781"; // neutral gray -- deliberately off the red/green scale
+const NO_DATA_COLOR = "#64748b"; // neutral slate -- deliberately off the red/green scale
 const NO_DATA_LABEL = "No Data";
 
 function badgeColor(zone) {
