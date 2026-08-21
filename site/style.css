@@ -99,7 +99,7 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
   display: block;
   width: 100%;
   margin: 0 0 0.5rem;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 78%, white));
   color: var(--accent-fg);
   border: none;
   padding: 0.85rem 1.4rem;
@@ -108,10 +108,17 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
   font-family: inherit;
   border-radius: 12px;
   cursor: pointer;
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 32%, transparent);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-#locate-btn:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
-#locate-btn:active { transform: translateY(0); }
+#locate-btn:hover {
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 42%, transparent);
+  transform: translateY(-1px);
+}
+#locate-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 30%, transparent);
+}
 
 @media (min-width: 560px) {
   #locate-btn { width: auto; }
