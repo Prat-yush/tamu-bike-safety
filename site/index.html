@@ -10,12 +10,12 @@
 <body>
   <header>
     <h1>TAMU Bike Rack Safety</h1>
-    <p class="tagline">Reported theft history near TAMU College Station bike racks, by area.</p>
+    <p class="tagline">Reported theft history near TAMU College Station bike racks, by zone.</p>
   </header>
 
   <main>
     <section id="nearest-panel" aria-live="polite">
-      <button id="locate-btn">Find my nearest bike rack area</button>
+      <button id="locate-btn">Find my nearest bike rack zone</button>
       <div id="nearest-result" hidden>
         <div class="grade-badge" id="nearest-grade"></div>
         <div class="nearest-info">
@@ -40,13 +40,13 @@
         Every two weeks, TAMU UPD publishes public Crime Alert bulletins for
         stolen electric bikes and scooters (a Clery Act requirement). This
         site scrapes those alerts, matches each reported location to the
-        nearest defined campus bike-rack area, and scores it one of two
-        ways. Areas with at least one qualifying report get a letter grade,
+        nearest defined campus bike-rack zone, and scores it one of two
+        ways. Zones with at least one qualifying report get a letter grade,
         A+ to F, weighing recent reports more than older ones and blending
-        each area's own history with the campus-wide average based on how
-        much rack capacity (i.e. how much evidence) that area has &mdash;
+        each zone's own history with the campus-wide average based on how
+        much rack capacity (i.e. how much evidence) that zone has &mdash;
         a handful of racks with one old report isn't graded as confidently
-        as a large rack area with a real track record. Areas with zero
+        as a large rack zone with a real track record. Zones with zero
         reports get no letter grade at all &mdash; just a neutral
         <strong>"No Data"</strong> label, since a clean history and an
         under-reported one look identical from this data.
@@ -56,7 +56,7 @@
         means no theft has been reported there in the data collected so
         far, which could mean it's genuinely low-risk or just that nothing
         has been reported yet. Always lock your bike properly regardless of
-        area grade.
+        zone grade.
       </p>
       <p id="last-updated"></p>
     </section>

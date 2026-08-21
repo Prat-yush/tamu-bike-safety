@@ -76,8 +76,8 @@ function zoneFacts(z, coverageMonths) {
   const theftLine = `${z.incident_count} reported theft${z.incident_count === 1 ? "" : "s"} ` +
     `in ${coveragePhrase(coverageMonths)}`;
   const basisLine = z.status === "rated"
-    ? "Grade is based on thefts reported at racks in this area"
-    : "Not enough reports to grade this area";
+    ? "Grade is based on thefts reported at racks in this zone"
+    : "Not enough reports to grade this zone";
   return [theftLine, basisLine];
 }
 
@@ -117,8 +117,8 @@ function initMap(zones, racks) {
       .bindPopup(z
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
-            ? `Area grade: ${z.grade}<br>${z.incident_count} report(s) on file`
-            : `Area grade: ${NO_DATA_LABEL}<br>No reports on file`)
+            ? `Zone grade: ${z.grade}<br>${z.incident_count} report(s) on file`
+            : `Zone grade: ${NO_DATA_LABEL}<br>No reports on file`)
         : "Rack (unzoned)")
       .addTo(map);
   }
@@ -164,7 +164,7 @@ async function main() {
         const { latitude, longitude } = pos.coords;
         const { zone, distM } = nearestZone(latitude, longitude, zones);
         if (!zone) {
-          status.textContent = "No bike rack areas found.";
+          status.textContent = "No bike rack zones found.";
           return;
         }
         status.textContent = "";
