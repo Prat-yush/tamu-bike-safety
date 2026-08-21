@@ -21,18 +21,28 @@ function nearestZone(lat, lon, zones) {
   return { zone: best, distM: bestD };
 }
 
+const CONFIDENCE_NOTE = {
+  low: "This area has very few racks, so the grade is mostly the campus " +
+    "average rather than this area's own track record.",
+  medium: "This area has a moderate amount of data behind its grade.",
+  high: "This area has enough rack capacity that its grade mostly reflects " +
+    "its own report history, not the campus average.",
+};
+
 function describeZone(z, distM) {
   const distText = distM < 1000
     ? `${Math.round(distM)} m away`
     : `${(distM / 1000).toFixed(1)} km away`;
+  const confidenceText = CONFIDENCE_NOTE[z.confidence] || "";
   if (!z.has_reports) {
     return `${distText}. No bike theft reports matched to this area in the ` +
       `data collected so far (${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ` +
-      `${z.rack_capacity} capacity). That's a good sign, not a guarantee.`;
+      `${z.rack_capacity} capacity). That's a good sign, not a guarantee. ${confidenceText}`;
   }
   return `${distText}. ${z.incident_count} qualifying report` +
     `${z.incident_count === 1 ? "" : "s"} matched to this area ` +
-    `(${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ${z.rack_capacity} capacity).`;
+    `(${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ${z.rack_capacity} capacity), ` +
+    `weighted toward recent ones. ${confidenceText}`;
 }
 
 async function loadData() {

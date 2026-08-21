@@ -19,10 +19,14 @@ Live at: `https://<your-username>.github.io/<repo-name>/`
 3. **`pipeline/racks.py`** — pulls the public TAMU Transportation Services
    bike rack inventory (ArcGIS REST API) and assigns each rack to its
    nearest zone.
-4. **`pipeline/score.py`** — grades each zone A+ through F based on
-   incident count normalized by rack capacity, ranked among zones that have
-   at least one report. Writes `site/data/zones.json` +
-   `site/data/racks.geojson`.
+4. **`pipeline/score.py`** — grades each zone A+ through F. Incidents are
+   weighted by recency (1-year half-life, so old reports fade), then each
+   zone's rate is shrunk toward the campus-wide average via empirical-Bayes
+   smoothing, weighted by how much rack capacity (evidence) that zone has —
+   a zone with only a handful of racks doesn't get graded on its own thin
+   history alone. Grades are percentile bands over the smoothed rate across
+   all zones. Full rationale is in the docstring at the top of the file.
+   Writes `site/data/zones.json` + `site/data/racks.geojson`.
 5. **`site/`** — a static page. Gets the visitor's location client-side,
    finds the nearest zone by haversine distance against the ~90 zone
    centroids, and shows its grade plus an interactive map.
