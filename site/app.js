@@ -315,8 +315,8 @@ async function main() {
     warningEl.hidden = !showWarning;
     if (showWarning) {
       warningTextEl.textContent = zone.estimated
-        ? `This zone's grade is estimated at ${zone.grade} based on nearby areas -- ` +
-          `no thefts have been reported here specifically, but be extra careful.`
+        ? `This zone's grade is estimated at ${zone.grade} based on nearby confirmed reports. ` +
+          `No thefts have been reported here specifically, but be extra careful!`
         : `This zone has had a history of bike thefts. Please be extra careful!`;
     }
   }
