@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T23:38:15.740193+00:00",
+  "generated_at": "2026-08-21T23:58:18.624304+00:00",
   "methodology": {
     "recency_halflife_days": 365,
     "prior_strength_capacity_units": 3.0,
@@ -390,7 +390,7 @@
       "weighted_incident_count": 3.4,
       "rack_capacity": 75,
       "rack_count": 22,
-      "smoothed_incidents_per_40_capacity": 0.781,
+      "smoothed_incidents_per_40_capacity": 0.78,
       "confidence": "low",
       "has_reports": true
     },
