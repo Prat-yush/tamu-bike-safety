@@ -2,6 +2,16 @@ const GRADE_COLOR = {
   "A+": "#1a7f37", "A": "#3fb950", "B": "#9ecb3c",
   "C": "#d4a72c", "D": "#e8590c", "F": "#cf222e",
 };
+const NO_DATA_COLOR = "#6e7781"; // neutral gray -- deliberately off the red/green scale
+const NO_DATA_LABEL = "No Data";
+
+function badgeColor(zone) {
+  return zone.status === "rated" ? (GRADE_COLOR[zone.grade] || "#888") : NO_DATA_COLOR;
+}
+
+function badgeLabel(zone) {
+  return zone.status === "rated" ? zone.grade : NO_DATA_LABEL;
+}
 
 function haversineM(lat1, lon1, lat2, lon2) {
   const r = 6371000;
@@ -21,27 +31,37 @@ function nearestZone(lat, lon, zones) {
   return { zone: best, distM: bestD };
 }
 
-const CONFIDENCE_NOTE = {
+const CONFIDENCE_NOTE_RATED = {
   low: "This area has very few racks, so the grade is mostly the campus " +
     "average rather than this area's own track record.",
   medium: "This area has a moderate amount of data behind its grade.",
   high: "This area has enough rack capacity that its grade mostly reflects " +
     "its own report history, not the campus average.",
 };
+const CONFIDENCE_NOTE_NO_REPORTS = {
+  low: "This area also has very few racks, so a zero-report history here " +
+    "doesn't say much either way.",
+  medium: "This area has a moderate number of racks, so a zero-report " +
+    "history carries some weight.",
+  high: "This area has enough racks that a zero-report history over time " +
+    "is a reasonably meaningful signal, though still not a guarantee.",
+};
 
 function describeZone(z, distM) {
   const distText = distM < 1000
     ? `${Math.round(distM)} m away`
     : `${(distM / 1000).toFixed(1)} km away`;
-  const confidenceText = CONFIDENCE_NOTE[z.confidence] || "";
-  if (!z.has_reports) {
-    return `${distText}. No bike theft reports matched to this area in the ` +
-      `data collected so far (${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ` +
-      `${z.rack_capacity} capacity). That's a good sign, not a guarantee. ${confidenceText}`;
+  const rackText = `${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ${z.rack_capacity} capacity`;
+  if (z.status !== "rated") {
+    const confidenceText = CONFIDENCE_NOTE_NO_REPORTS[z.confidence] || "";
+    return `${distText}. No bike theft reports have been matched to this area ` +
+      `in the data collected so far (${rackText}). That could mean it's genuinely ` +
+      `low-risk, or just that nothing's been reported yet -- there's no way to ` +
+      `tell the difference from this data alone, so it isn't given a grade. ${confidenceText}`;
   }
+  const confidenceText = CONFIDENCE_NOTE_RATED[z.confidence] || "";
   return `${distText}. ${z.incident_count} qualifying report` +
-    `${z.incident_count === 1 ? "" : "s"} matched to this area ` +
-    `(${z.rack_count} rack${z.rack_count === 1 ? "" : "s"}, ${z.rack_capacity} capacity), ` +
+    `${z.incident_count === 1 ? "" : "s"} matched to this area (${rackText}), ` +
     `weighted toward recent ones. ${confidenceText}`;
 }
 
@@ -75,13 +95,15 @@ function initMap(zones, racks) {
   for (const f of racks.features) {
     const [lon, lat] = f.geometry.coordinates;
     const z = zoneById[f.properties.zone_id];
-    const color = z ? (GRADE_COLOR[z.grade] || "#888") : "#888";
+    const color = z ? badgeColor(z) : "#888";
     L.circleMarker([lat, lon], {
       radius: 4, color, fillColor: color, fillOpacity: 0.8, weight: 1,
     })
       .bindPopup(z
-        ? `<strong>${z.name}</strong><br>Area grade: ${z.grade}<br>` +
-          `${z.incident_count} report(s) on file`
+        ? `<strong>${z.name}</strong><br>` +
+          (z.status === "rated"
+            ? `Area grade: ${z.grade}<br>${z.incident_count} report(s) on file`
+            : `Area grade: ${NO_DATA_LABEL}<br>No reports on file`)
         : "Rack (unzoned)")
       .addTo(map);
   }
@@ -91,9 +113,11 @@ function initMap(zones, racks) {
 
 function renderLegend() {
   const el = document.getElementById("legend");
-  el.innerHTML = Object.entries(GRADE_COLOR)
+  const gradeItems = Object.entries(GRADE_COLOR)
     .map(([g, c]) => `<span class="legend-item"><i style="background:${c}"></i>${g}</span>`)
     .join("");
+  const noDataItem = `<span class="legend-item"><i style="background:${NO_DATA_COLOR}"></i>${NO_DATA_LABEL}</span>`;
+  el.innerHTML = gradeItems + noDataItem;
 }
 
 async function main() {
@@ -129,8 +153,10 @@ async function main() {
         }
         status.textContent = "";
         resultEl.hidden = false;
-        gradeEl.textContent = zone.grade;
-        gradeEl.style.background = GRADE_COLOR[zone.grade] || "#888";
+        const label = badgeLabel(zone);
+        gradeEl.textContent = label;
+        gradeEl.style.background = badgeColor(zone);
+        gradeEl.style.fontSize = label.length > 2 ? "0.75rem" : "1.5rem";
         nameEl.textContent = zone.name;
         detailEl.textContent = describeZone(zone, distM);
         map.setView([zone.lat, zone.lon], 17);
