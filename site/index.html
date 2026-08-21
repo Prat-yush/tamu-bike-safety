@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAMU Bike Rack Safety</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>TAMU Bike Rack Safety</h1>
+    <p class="tagline">Reported theft history near TAMU College Station bike racks, by area.</p>
+  </header>
+
+  <main>
+    <section id="nearest-panel" aria-live="polite">
+      <button id="locate-btn">Find my nearest bike rack area</button>
+      <div id="nearest-result" hidden>
+        <div class="grade-badge" id="nearest-grade"></div>
+        <div class="nearest-info">
+          <h2 id="nearest-name"></h2>
+          <p id="nearest-detail"></p>
+        </div>
+      </div>
+      <p id="locate-status" role="status"></p>
+    </section>
+
+    <section id="map-section">
+      <div id="map"></div>
+      <div id="legend"></div>
+    </section>
+
+    <section id="about">
+      <h2>How this works</h2>
+      <p>
+        Every two weeks, TAMU UPD publishes public Crime Alert bulletins for
+        stolen electric bikes and scooters (a Clery Act requirement). This
+        site scrapes those alerts, matches each reported location to the
+        nearest defined campus bike-rack area, and grades each area from A+
+        to F based on how many qualifying reports it has relative to how
+        much rack capacity it hosts.
+      </p>
+      <p>
+        <strong>A grade of A+ with no reports does not mean "verified
+        safe"</strong> &mdash; it means no theft has been reported there in
+        the data collected so far. Always lock your bike properly regardless
+        of area grade.
+      </p>
+      <p id="last-updated"></p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

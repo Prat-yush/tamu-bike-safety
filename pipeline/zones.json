@@ -1,0 +1,738 @@
+{
+  "zones": [
+    {
+      "id": "zone-001",
+      "name": "Krueger Residence Hall",
+      "lat": 30.616029,
+      "lon": -96.336175,
+      "rack_point_count": 10,
+      "aliases": []
+    },
+    {
+      "id": "zone-002",
+      "name": "Hart Residence Hall",
+      "lat": 30.614131,
+      "lon": -96.340345,
+      "rack_point_count": 9,
+      "aliases": []
+    },
+    {
+      "id": "zone-003",
+      "name": "CVE Lab Building",
+      "lat": 30.620169,
+      "lon": -96.339445,
+      "rack_point_count": 9,
+      "aliases": []
+    },
+    {
+      "id": "zone-004",
+      "name": "Lot 7",
+      "lat": 30.618984,
+      "lon": -96.341099,
+      "rack_point_count": 14,
+      "aliases": []
+    },
+    {
+      "id": "zone-005",
+      "name": "West Campus Garage",
+      "lat": 30.608927,
+      "lon": -96.343864,
+      "rack_point_count": 5,
+      "aliases": []
+    },
+    {
+      "id": "zone-006",
+      "name": "Spence Street",
+      "lat": 30.620647,
+      "lon": -96.341538,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-007",
+      "name": "Northside Garage",
+      "lat": 30.619531,
+      "lon": -96.34306,
+      "rack_point_count": 5,
+      "aliases": []
+    },
+    {
+      "id": "zone-008",
+      "name": "U-V Row",
+      "lat": 30.627668,
+      "lon": -96.341625,
+      "rack_point_count": 18,
+      "aliases": []
+    },
+    {
+      "id": "zone-009",
+      "name": "Lot 71",
+      "lat": 30.61596,
+      "lon": -96.352508,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-010",
+      "name": "Vet School",
+      "lat": 30.614767,
+      "lon": -96.350733,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-011",
+      "name": "Texas A&M University",
+      "lat": 30.613027,
+      "lon": -96.353265,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-012",
+      "name": "Texas A&M University (2)",
+      "lat": 30.611408,
+      "lon": -96.354644,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-013",
+      "name": "Lot 110",
+      "lat": 30.603689,
+      "lon": -96.353949,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-014",
+      "name": "Lot 109",
+      "lat": 30.601993,
+      "lon": -96.35947,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-015",
+      "name": "Annenberg Presidential Conference Center",
+      "lat": 30.597363,
+      "lon": -96.35349,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-016",
+      "name": "Texas A&M University (3)",
+      "lat": 30.61011,
+      "lon": -96.35002,
+      "rack_point_count": 7,
+      "aliases": []
+    },
+    {
+      "id": "zone-017",
+      "name": "Lot 30a",
+      "lat": 30.616894,
+      "lon": -96.345307,
+      "rack_point_count": 11,
+      "aliases": []
+    },
+    {
+      "id": "zone-018",
+      "name": "Jones Street",
+      "lat": 30.615489,
+      "lon": -96.34558,
+      "rack_point_count": 13,
+      "aliases": []
+    },
+    {
+      "id": "zone-019",
+      "name": "Fish Pond West",
+      "lat": 30.616396,
+      "lon": -96.343866,
+      "rack_point_count": 5,
+      "aliases": [
+        "Lechner Hall",
+        "Lechner"
+      ]
+    },
+    {
+      "id": "zone-020",
+      "name": "Thompson Hall",
+      "lat": 30.616544,
+      "lon": -96.341231,
+      "rack_point_count": 9,
+      "aliases": []
+    },
+    {
+      "id": "zone-021",
+      "name": "Starbucks",
+      "lat": 30.617094,
+      "lon": -96.338897,
+      "rack_point_count": 9,
+      "aliases": []
+    },
+    {
+      "id": "zone-022",
+      "name": "Memorial Student Center",
+      "lat": 30.612384,
+      "lon": -96.340948,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-023",
+      "name": "University Center Garage",
+      "lat": 30.611591,
+      "lon": -96.338838,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-024",
+      "name": "Bugle Stand",
+      "lat": 30.612418,
+      "lon": -96.335394,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-025",
+      "name": "Starbucks (2)",
+      "lat": 30.613432,
+      "lon": -96.337687,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-026",
+      "name": "Mosher Lane",
+      "lat": 30.614746,
+      "lon": -96.33501,
+      "rack_point_count": 6,
+      "aliases": []
+    },
+    {
+      "id": "zone-027",
+      "name": "Dunn Residence Hall",
+      "lat": 30.615157,
+      "lon": -96.337572,
+      "rack_point_count": 6,
+      "aliases": []
+    },
+    {
+      "id": "zone-028",
+      "name": "Golf Lot",
+      "lat": 30.616572,
+      "lon": -96.33457,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-029",
+      "name": "Lot 15",
+      "lat": 30.617457,
+      "lon": -96.337257,
+      "rack_point_count": 5,
+      "aliases": []
+    },
+    {
+      "id": "zone-030",
+      "name": "Langford Architecture Center Building A",
+      "lat": 30.619076,
+      "lon": -96.33771,
+      "rack_point_count": 9,
+      "aliases": []
+    },
+    {
+      "id": "zone-031",
+      "name": "Scoates Hall",
+      "lat": 30.618401,
+      "lon": -96.33833,
+      "rack_point_count": 5,
+      "aliases": []
+    },
+    {
+      "id": "zone-032",
+      "name": "Lot 119",
+      "lat": 30.604696,
+      "lon": -96.355896,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-033",
+      "name": "Lot 118",
+      "lat": 30.60028,
+      "lon": -96.359564,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-034",
+      "name": "Wellborn Road",
+      "lat": 30.622246,
+      "lon": -96.357338,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-035",
+      "name": "Agronomy Road",
+      "lat": 30.617773,
+      "lon": -96.354459,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-036",
+      "name": "Lot 108",
+      "lat": 30.605574,
+      "lon": -96.358415,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-037",
+      "name": "School of Public Health",
+      "lat": 30.609623,
+      "lon": -96.35416,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-038",
+      "name": "HEEP Center",
+      "lat": 30.611445,
+      "lon": -96.348316,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-039",
+      "name": "Lot 100j",
+      "lat": 30.604675,
+      "lon": -96.342109,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-040",
+      "name": "Lot 100d",
+      "lat": 30.60187,
+      "lon": -96.349087,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-041",
+      "name": "Lot 101",
+      "lat": 30.60876,
+      "lon": -96.357605,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-042",
+      "name": "Lot 48",
+      "lat": 30.60868,
+      "lon": -96.338737,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-043",
+      "name": "A. P. Beutel Health Center",
+      "lat": 30.61546,
+      "lon": -96.34282,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-044",
+      "name": "T Row",
+      "lat": 30.6263,
+      "lon": -96.342263,
+      "rack_point_count": 21,
+      "aliases": []
+    },
+    {
+      "id": "zone-045",
+      "name": "The Gardens Community Center",
+      "lat": 30.626541,
+      "lon": -96.340086,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-046",
+      "name": "Emerging Technologies Building",
+      "lat": 30.622189,
+      "lon": -96.339481,
+      "rack_point_count": 5,
+      "aliases": [
+        "Zachry Engineering Education Complex",
+        "Zachry"
+      ]
+    },
+    {
+      "id": "zone-047",
+      "name": "E.B. Cushing Stadium",
+      "lat": 30.602099,
+      "lon": -96.345231,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-048",
+      "name": "Lot 113",
+      "lat": 30.601957,
+      "lon": -96.354377,
+      "rack_point_count": 5,
+      "aliases": []
+    },
+    {
+      "id": "zone-049",
+      "name": "Zone 49",
+      "lat": 30.615369,
+      "lon": -96.369003,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-050",
+      "name": "Old Main Drive",
+      "lat": 30.614405,
+      "lon": -96.343469,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-051",
+      "name": "Lot 128",
+      "lat": 30.619062,
+      "lon": -96.365379,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-052",
+      "name": "F & B Road",
+      "lat": 30.621444,
+      "lon": -96.359341,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-053",
+      "name": "Raymond Stotzer Parkway",
+      "lat": 30.614525,
+      "lon": -96.352861,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-054",
+      "name": "VetEd Drive",
+      "lat": 30.611718,
+      "lon": -96.356874,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-055",
+      "name": "VetEd Drive (2)",
+      "lat": 30.608825,
+      "lon": -96.360953,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-056",
+      "name": "White Creek",
+      "lat": 30.607402,
+      "lon": -96.355515,
+      "rack_point_count": 6,
+      "aliases": []
+    },
+    {
+      "id": "zone-057",
+      "name": "Reed Arena",
+      "lat": 30.605169,
+      "lon": -96.347232,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-058",
+      "name": "Olsen Boulevard",
+      "lat": 30.606162,
+      "lon": -96.342904,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-059",
+      "name": "Polo Road Building",
+      "lat": 30.622936,
+      "lon": -96.337435,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-060",
+      "name": "Hotard Hall",
+      "lat": 30.618066,
+      "lon": -96.344582,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-061",
+      "name": "Texas A&M Hotel and Conference Center",
+      "lat": 30.611272,
+      "lon": -96.342276,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-062",
+      "name": "MSC",
+      "lat": 30.612262,
+      "lon": -96.343967,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-063",
+      "name": "Tom Chandler Road",
+      "lat": 30.603648,
+      "lon": -96.345833,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-064",
+      "name": "Penberthy Boulevard",
+      "lat": 30.604746,
+      "lon": -96.34917,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-065",
+      "name": "Ag Building",
+      "lat": 30.6053,
+      "lon": -96.350891,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-066",
+      "name": "Texas A&M University (4)",
+      "lat": 30.61102,
+      "lon": -96.351426,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-067",
+      "name": "Research Parkway",
+      "lat": 30.601718,
+      "lon": -96.357255,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-068",
+      "name": "Agronomy Road (2)",
+      "lat": 30.618205,
+      "lon": -96.356438,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-069",
+      "name": "Texas A&M Weightlifting",
+      "lat": 30.613571,
+      "lon": -96.348775,
+      "rack_point_count": 3,
+      "aliases": []
+    },
+    {
+      "id": "zone-070",
+      "name": "White Creek Community Center",
+      "lat": 30.607726,
+      "lon": -96.353645,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-071",
+      "name": "F & B Road (2)",
+      "lat": 30.618189,
+      "lon": -96.360957,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-072",
+      "name": "Lot 8535",
+      "lat": 30.647281,
+      "lon": -96.475125,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-073",
+      "name": "4th Street",
+      "lat": 30.642075,
+      "lon": -96.468563,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-074",
+      "name": "Penberthy @ Park West",
+      "lat": 30.597065,
+      "lon": -96.343319,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-075",
+      "name": "Lot 63",
+      "lat": 30.600079,
+      "lon": -96.343572,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-076",
+      "name": "Lot 30d",
+      "lat": 30.614021,
+      "lon": -96.346555,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-077",
+      "name": "Jack K. Williams Administration Building",
+      "lat": 30.618539,
+      "lon": -96.336051,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-078",
+      "name": "Wisenbaker",
+      "lat": 30.621079,
+      "lon": -96.33816,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-079",
+      "name": "Bizzell Street",
+      "lat": 30.620544,
+      "lon": -96.335911,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-080",
+      "name": "Lot 40b",
+      "lat": 30.612462,
+      "lon": -96.333246,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-081",
+      "name": "Lot 111",
+      "lat": 30.598109,
+      "lon": -96.351897,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-082",
+      "name": "Texas A&M University (5)",
+      "lat": 30.60761,
+      "lon": -96.350877,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-083",
+      "name": "Texas A&M University (6)",
+      "lat": 30.609503,
+      "lon": -96.348246,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-084",
+      "name": "Texas A&M University (7)",
+      "lat": 30.611141,
+      "lon": -96.345782,
+      "rack_point_count": 2,
+      "aliases": []
+    },
+    {
+      "id": "zone-085",
+      "name": "Wellborn Road (2)",
+      "lat": 30.606609,
+      "lon": -96.338235,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-086",
+      "name": "Clayton W. Williams, Jr. Alumni Center",
+      "lat": 30.608279,
+      "lon": -96.336839,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-087",
+      "name": "Dunlap Drill Field",
+      "lat": 30.610244,
+      "lon": -96.334519,
+      "rack_point_count": 4,
+      "aliases": []
+    },
+    {
+      "id": "zone-088",
+      "name": "Wellborn Road (3)",
+      "lat": 30.620661,
+      "lon": -96.356581,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-089",
+      "name": "Texas A&M University (8)",
+      "lat": 30.608324,
+      "lon": -96.349082,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-090",
+      "name": "Penberthy Boulevard (2)",
+      "lat": 30.600829,
+      "lon": -96.346062,
+      "rack_point_count": 1,
+      "aliases": []
+    },
+    {
+      "id": "zone-091",
+      "name": "Penberthy Boulevard (3)",
+      "lat": 30.602686,
+      "lon": -96.347202,
+      "rack_point_count": 1,
+      "aliases": []
+    }
+  ]
+}

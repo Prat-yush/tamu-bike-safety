@@ -1,0 +1,115 @@
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff;
+  --fg: #1b1f23;
+  --muted: #57606a;
+  --border: #d0d7de;
+  --accent: #500000; /* Aggie maroon */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --fg: #e6edf3;
+    --muted: #8b949e;
+    --border: #30363d;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+header {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header h1 { margin: 0 0 0.25rem; color: var(--accent); font-size: 1.5rem; }
+.tagline { margin: 0; color: var(--muted); }
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.25rem;
+}
+
+#nearest-panel {
+  margin-bottom: 1.25rem;
+}
+
+#locate-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#locate-btn:hover { opacity: 0.9; }
+
+#locate-status { color: var(--muted); }
+
+#nearest-result {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.grade-badge {
+  flex: 0 0 auto;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nearest-info h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+.nearest-info p { margin: 0; color: var(--muted); }
+
+#map-section { position: relative; margin-bottom: 1.5rem; }
+#map {
+  height: 480px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+#legend {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+}
+.legend-item { display: flex; align-items: center; gap: 0.3rem; }
+.legend-item i {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+#about { color: var(--muted); font-size: 0.95rem; }
+#about h2 { color: var(--fg); font-size: 1.1rem; }
+#last-updated { font-size: 0.85rem; }

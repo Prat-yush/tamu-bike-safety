@@ -1,0 +1,79 @@
+name: Update bike rack safety data
+
+on:
+  schedule:
+    # 06:00 UTC every other Monday. GitHub cron doesn't support true
+    # biweekly natively; this is close enough given alerts themselves are
+    # published on an irregular ~2-week cadence -- a run that finds nothing
+    # new is a no-op commit-wise.
+    - cron: "0 6 */14 * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  refresh-data:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install pipeline dependencies
+        working-directory: pipeline
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        working-directory: pipeline
+        run: |
+          python scrape.py manifest
+          python scrape.py fetch
+          python scrape.py parse
+          python zonejoin.py
+          python racks.py
+          python score.py
+
+      - name: Check for changes
+        id: diff
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit refreshed data
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "Auto-update: refresh bike theft data and zone grades"
+          git push
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: refresh-data
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
