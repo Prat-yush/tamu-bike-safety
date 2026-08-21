@@ -118,7 +118,12 @@ function initMap(zones, racks) {
         ? `<strong>${z.name}</strong><br>` +
           (z.status === "rated"
             ? `Zone grade: ${z.grade}<br>${z.incident_count} report(s) on file`
-            : `Zone grade: ${NO_DATA_LABEL}<br>No reports on file`)
+            // No-data zones don't show a grade line for now -- once a zone
+            // has real report history it flips to "rated" above and gets
+            // graded normally. Kept here, not deleted, for if we later want
+            // to show something like "Zone grade: No Data" again:
+            // `Zone grade: ${NO_DATA_LABEL}<br>No reports on file`
+            : `No theft history in this zone`)
         : "Rack (unzoned)")
       .addTo(map);
   }
