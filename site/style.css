@@ -1,31 +1,39 @@
 :root {
   color-scheme: light dark;
-  --bg: #faf9f8;
+  /* Neutrals carry a faint warm/maroon undertone throughout (bg, card,
+     border, muted text) rather than plain gray -- the whole page should
+     read as "maroon and white" ambiently, not just the accent color. */
+  --bg: #faf6f6;
   --card-bg: #ffffff;
-  --fg: #201a1a;
-  --muted: #6b7280;
-  --border: #e6e2e0;
+  --fg: #241b1c;
+  --muted: #7a6b6c;
+  --border: #ecdfe0;
   --accent: #7a2331; /* refined Aggie maroon -- livelier than official #500000 for UI, still unmistakably maroon */
   --accent-fg: #ffffff;
+  --accent-soft: color-mix(in srgb, var(--accent) 7%, var(--card-bg));
   --danger: #b91c1c;
-  --shadow: 0 1px 2px rgba(20, 10, 10, 0.04), 0 4px 14px rgba(20, 10, 10, 0.06);
+  --shadow: 0 1px 2px rgba(60, 20, 24, 0.05), 0 4px 14px rgba(60, 20, 24, 0.07);
+  --container-w: 900px;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #131011;
-    --card-bg: #1c1717;
-    --fg: #f2eeee;
-    --muted: #a89fa0;
-    --border: #332b2b;
+    --bg: #150f10;
+    --card-bg: #201718;
+    --fg: #f5eeee;
+    --muted: #b3a2a3;
+    --border: #3a2c2d;
     --accent: #c9707c;
-    --accent-fg: #201014;
+    --accent-fg: #241014;
+    --accent-soft: color-mix(in srgb, var(--accent) 12%, var(--card-bg));
     --danger: #e35b5b;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 4px 16px rgba(0, 0, 0, 0.35);
   }
 }
 
 * { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -34,48 +42,57 @@ body {
   color: var(--fg);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden; /* belt-and-suspenders: nothing should cause horizontal scroll on mobile */
+}
+
+.container {
+  max-width: var(--container-w);
+  margin: 0 auto;
+  padding: 0 1.1rem;
 }
 
 header {
-  padding: 1.75rem 1.25rem 1.25rem;
+  padding: 1.5rem 0 1.15rem;
+  background: var(--accent-soft);
   border-bottom: 1px solid var(--border);
 }
 
 header h1 {
   margin: 0 0 0.3rem;
   color: var(--accent);
-  font-size: 1.6rem;
+  font-size: clamp(1.35rem, 4.5vw, 1.7rem);
   font-weight: 800;
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .tagline { margin: 0; color: var(--muted); font-size: 0.98rem; max-width: 40rem; }
 
-main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.25rem;
-}
+main { padding: 1.1rem 0 2rem; }
 
-#nearest-panel {
-  margin-bottom: 1.25rem;
-}
+#nearest-panel { margin-bottom: 1.1rem; }
 
 #locate-btn {
+  display: block;
+  width: 100%;
   background: var(--accent);
   color: var(--accent-fg);
   border: none;
-  padding: 0.8rem 1.4rem;
-  font-size: 0.98rem;
+  padding: 0.85rem 1.4rem;
+  font-size: 1rem;
   font-weight: 600;
   font-family: inherit;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 #locate-btn:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
 #locate-btn:active { transform: translateY(0); }
 
-#locate-status { color: var(--muted); }
+@media (min-width: 560px) {
+  #locate-btn { width: auto; }
+}
+
+#locate-status { color: var(--muted); margin: 0.6rem 0 0; }
 
 /* Collapsed by default (not just hidden -- animatable). display:flex here
    would otherwise beat the [hidden] UA rule on specificity and show an
@@ -85,7 +102,7 @@ main {
   gap: 1.1rem;
   align-items: center;
   background: var(--card-bg);
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid transparent;
   max-height: 0;
   opacity: 0;
@@ -96,12 +113,25 @@ main {
               margin-top 0.35s ease, padding 0.35s ease;
 }
 #nearest-result.visible {
-  max-height: 20rem;
+  max-height: 28rem;
   opacity: 1;
-  margin-top: 1.1rem;
+  margin-top: 1rem;
   padding: 1.1rem;
   border-color: var(--border);
   box-shadow: var(--shadow);
+}
+
+/* Small phones: badge sits above the info column, centered, instead of
+   squeezing both side by side into a narrow strip. */
+@media (max-width: 420px) {
+  #nearest-result.visible {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .grade-badge { align-self: center; }
+  .nearest-info p,
+  .fact-list li { text-align: left; }
 }
 
 .grade-badge {
@@ -120,6 +150,7 @@ main {
   padding: 0.25rem;
 }
 
+.nearest-info { min-width: 0; } /* lets long zone names wrap/ellipsize instead of overflowing the card */
 .nearest-info h2 { margin: 0 0 0.15rem; font-size: 1.15rem; font-weight: 700; }
 .nearest-info p { margin: 0; color: var(--muted); }
 .muted-small { font-size: 0.85rem; margin-bottom: 0.5rem !important; }
@@ -131,7 +162,7 @@ main {
   font-size: 0.9rem;
 }
 .fact-list li {
-  padding: 0.15rem 0;
+  padding: 0.2rem 0;
   border-bottom: 1px dotted var(--border);
 }
 .fact-list li:last-child { border-bottom: none; }
@@ -140,7 +171,7 @@ main {
   font-size: 0.82rem;
   color: var(--fg);
   border-left: 3px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  background: var(--accent-soft);
   padding: 0.5rem 0.65rem;
   border-radius: 0 8px 8px 0;
 }
@@ -157,32 +188,50 @@ main {
 
 #map-section { position: relative; margin-bottom: 1.5rem; }
 #map {
-  height: 480px;
-  border-radius: 14px;
+  height: clamp(320px, 62vh, 480px);
+  border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
 }
 
+/* Mobile-first: a full-width strip of centered, wrapping chips along the
+   bottom of the map (a tight little corner box would either overflow or
+   force 7 items down to unreadable size on a phone). */
 #legend {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 0.6rem;
+  right: 0.6rem;
+  left: 0.6rem;
   z-index: 1000;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.6rem;
   display: flex;
-  gap: 0.6rem;
-  font-size: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 0.6rem;
+  font-size: 0.76rem;
   box-shadow: var(--shadow);
 }
-.legend-item { display: flex; align-items: center; gap: 0.3rem; }
+.legend-item { display: flex; align-items: center; gap: 0.28rem; white-space: nowrap; }
 .legend-item i {
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 0.65rem;
+  height: 0.65rem;
   border-radius: 50%;
   display: inline-block;
+  flex: none;
+}
+
+/* Wide enough that the legend fits on one line -- collapse back to a
+   compact box tucked in the map's corner. */
+@media (min-width: 560px) {
+  #legend {
+    left: auto;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+  }
 }
 
 #about { color: var(--muted); font-size: 0.95rem; }
@@ -197,20 +246,20 @@ main {
   font-weight: 600;
   font-size: 0.9rem;
   font-family: inherit;
-  padding: 0.55rem 1rem;
+  padding: 0.6rem 1.1rem;
   border-radius: 10px;
   text-decoration: none;
   cursor: pointer;
   transition: background 0.15s ease;
 }
-.btn-secondary:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.btn-secondary:hover { background: var(--accent-soft); }
 
 .warning-box {
   margin: 0 0 0.6rem;
   padding: 0.55rem 0.7rem;
   border-radius: 0 8px 8px 0;
   border-left: 3px solid var(--danger);
-  background: color-mix(in srgb, var(--danger) 10%, transparent);
+  background: color-mix(in srgb, var(--danger) 10%, var(--card-bg));
   font-size: 0.85rem;
 }
 .warning-box p { margin: 0 0 0.4rem; color: var(--fg); }
