@@ -188,18 +188,6 @@ main {
 }
 .warning-box p { margin: 0 0 0.4rem; color: var(--fg); }
 .warning-box p:last-child { margin-bottom: 0; }
-#find-safer-btn {
-  background: none;
-  border: 1.5px solid #cf222e;
-  color: #cf222e;
-  font-weight: 600;
-  padding: 0.35rem 0.7rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-#find-safer-btn:hover { background: color-mix(in srgb, #cf222e 12%, transparent); }
-#safer-result:empty { display: none; }
 
 @keyframes pin-glow-pulse {
   0%, 100% {

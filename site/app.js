@@ -2,7 +2,6 @@ const GRADE_COLOR = {
   "A+": "#1a7f37", "A": "#3fb950", "B": "#9ecb3c",
   "C": "#d4a72c", "D": "#e8590c", "F": "#cf222e",
 };
-const GRADE_RANK = { "A+": 0, "A": 1, "B": 2, "C": 3, "D": 4, "F": 5 };
 const WARNING_GRADES = new Set(["C", "D", "F"]);
 const NO_DATA_COLOR = "#6e7781"; // neutral gray -- deliberately off the red/green scale
 const NO_DATA_LABEL = "No Data";
@@ -186,20 +185,6 @@ function highlightZoneRacks(zoneId, markersByZone, durationMs = 4000) {
   }, durationMs);
 }
 
-// Nearest zone that's strictly a better grade than the one the visitor is
-// currently looking at. Only considers rated zones -- a "No Data" zone
-// isn't a confirmed-safer claim, just an unconfirmed one, so it's not
-// offered here.
-function findSaferAlternative(lat, lon, currentZone, zones) {
-  const currentRank = GRADE_RANK[currentZone.grade];
-  let best = null, bestD = Infinity;
-  for (const z of zones) {
-    if (z.status !== "rated" || GRADE_RANK[z.grade] >= currentRank) continue;
-    const d = haversineM(lat, lon, z.lat, z.lon);
-    if (d < bestD) { best = z; bestD = d; }
-  }
-  return best ? { zone: best, distM: bestD } : null;
-}
 
 function renderLegend() {
   const el = document.getElementById("legend");
@@ -228,11 +213,8 @@ async function main() {
   const distanceEl = document.getElementById("nearest-distance");
   const factsEl = document.getElementById("nearest-facts");
   const warningEl = document.getElementById("theft-warning");
-  const saferBtn = document.getElementById("find-safer-btn");
-  const saferResultEl = document.getElementById("safer-result");
 
   let lastCoords = null;
-  let currentZone = null;
   let userMarker = null;
   let watchId = null;
 
@@ -264,7 +246,6 @@ async function main() {
   // themselves). pan controls whether the map recenters -- skipped for a
   // direct marker click since the visitor already navigated there.
   function showZone(zone, distM, { pan = true } = {}) {
-    currentZone = zone;
     resultEl.classList.add("visible");
     const label = badgeLabel(zone);
     gradeEl.textContent = label;
@@ -277,7 +258,6 @@ async function main() {
 
     const showWarning = zone.status === "rated" && WARNING_GRADES.has(zone.grade);
     warningEl.hidden = !showWarning;
-    saferResultEl.textContent = "";
 
     highlightZoneRacks(zone.id, markersByZone);
     if (pan) map.setView([zone.lat, zone.lon], 17);
@@ -320,19 +300,6 @@ async function main() {
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
-  });
-
-  saferBtn.addEventListener("click", () => {
-    if (!lastCoords || !currentZone) return;
-    const alt = findSaferAlternative(lastCoords.lat, lastCoords.lon, currentZone, zones);
-    if (!alt) {
-      saferResultEl.textContent = "No clearly safer zone found nearby.";
-      return;
-    }
-    saferResultEl.textContent =
-      `Try ${alt.zone.name} instead — Grade ${alt.zone.grade}, ${distanceText(alt.distM)}.`;
-    highlightZoneRacks(alt.zone.id, markersByZone);
-    map.setView([alt.zone.lat, alt.zone.lon], 17);
   });
 }
 
