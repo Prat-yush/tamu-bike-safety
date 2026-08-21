@@ -123,7 +123,8 @@ main {
 }
 .caveat strong { color: var(--accent); }
 
-.bike-pin-icon {
+.bike-pin-icon,
+.user-location-icon {
   background: none;
   border: none;
 }

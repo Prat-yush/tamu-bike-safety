@@ -44,6 +44,25 @@ function bikePinIcon(color) {
   return icon;
 }
 
+// Small navigation-arrow marker for the visitor's own live position. Points
+// up (north) by default; rotates to match device heading when the browser
+// provides one (mostly while actually moving, e.g. walking with the phone).
+function userLocationIcon(headingDeg) {
+  const rotation = typeof headingDeg === "number" && !Number.isNaN(headingDeg) ? headingDeg : 0;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"
+         style="transform: rotate(${rotation}deg); transform-origin: 50% 50%;">
+      <circle cx="11" cy="11" r="9" fill="#1a73e8" opacity="0.15"/>
+      <path d="M11 2.5 L17 18 L11 14.3 L5 18 Z" fill="#1a73e8" stroke="#ffffff" stroke-width="1.3" stroke-linejoin="round"/>
+    </svg>`;
+  return L.divIcon({
+    className: "user-location-icon",
+    html: svg,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+  });
+}
+
 function haversineM(lat1, lon1, lat2, lon2) {
   const r = 6371000;
   const p1 = lat1 * Math.PI / 180, p2 = lat2 * Math.PI / 180;
@@ -212,6 +231,31 @@ async function main() {
 
   let lastCoords = null;
   let currentZone = null;
+  let userMarker = null;
+  let watchId = null;
+
+  function updateUserMarker(lat, lon, heading) {
+    lastCoords = { lat, lon };
+    const icon = userLocationIcon(heading);
+    if (userMarker) {
+      userMarker.setLatLng([lat, lon]);
+      userMarker.setIcon(icon);
+    } else {
+      userMarker = L.marker([lat, lon], { icon, zIndexOffset: 1000, interactive: false }).addTo(map);
+    }
+  }
+
+  // Keeps the arrow moving after the first fix. Started once, from the
+  // locate button, since geolocation permission is already granted by
+  // that point -- no separate prompt.
+  function startWatchingLocation() {
+    if (watchId != null || !("geolocation" in navigator)) return;
+    watchId = navigator.geolocation.watchPosition(
+      (pos) => updateUserMarker(pos.coords.latitude, pos.coords.longitude, pos.coords.heading),
+      () => { /* keep the last-known arrow position on a transient watch error */ },
+      { enableHighAccuracy: true, maximumAge: 5000 }
+    );
+  }
 
   // distM is null when there's no reference point to measure from yet
   // (e.g. a rack was clicked directly before the visitor ever located
@@ -257,8 +301,8 @@ async function main() {
     status.textContent = "Locating…";
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude } = pos.coords;
-        lastCoords = { lat: latitude, lon: longitude };
+        const { latitude, longitude, heading } = pos.coords;
+        updateUserMarker(latitude, longitude, heading);
         const { zone, distM } = nearestZone(latitude, longitude, zones);
         if (!zone) {
           status.textContent = "No bike rack zones found.";
@@ -266,6 +310,7 @@ async function main() {
         }
         status.textContent = "";
         showZone(zone, distM);
+        startWatchingLocation();
       },
       (err) => {
         status.textContent = `Couldn't get your location (${err.message}). ` +
