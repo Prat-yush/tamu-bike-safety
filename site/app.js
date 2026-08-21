@@ -44,23 +44,25 @@ function bikePinIcon(color) {
   return icon;
 }
 
-// Small navigation-arrow marker for the visitor's own live position. Points
-// up (north) by default; rotates to match device heading when the browser
-// provides one (mostly while actually moving, e.g. walking with the phone).
-function userLocationIcon(headingDeg) {
-  const rotation = typeof headingDeg === "number" && !Number.isNaN(headingDeg) ? headingDeg : 0;
+// Small dot marker (Google-Maps-blue-dot style) for the visitor's own live
+// position. No heading/rotation -- browser-supplied heading only comes from
+// GPS motion, not a compass, so an arrow just sat still-and-wrong most of
+// the time. A plain dot doesn't make that claim.
+let _userLocationIcon = null;
+function userLocationIcon() {
+  if (_userLocationIcon) return _userLocationIcon;
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22"
-         style="transform: rotate(${rotation}deg); transform-origin: 50% 50%;">
-      <circle cx="11" cy="11" r="9" fill="#1a73e8" opacity="0.15"/>
-      <path d="M11 2.5 L17 18 L11 14.3 L5 18 Z" fill="#1a73e8" stroke="#ffffff" stroke-width="1.3" stroke-linejoin="round"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+      <circle cx="10" cy="10" r="9" fill="#1a73e8" opacity="0.18"/>
+      <circle cx="10" cy="10" r="5.5" fill="#1a73e8" stroke="#ffffff" stroke-width="2"/>
     </svg>`;
-  return L.divIcon({
+  _userLocationIcon = L.divIcon({
     className: "user-location-icon",
     html: svg,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    iconSize: [20, 20],
+    iconAnchor: [10, 10],
   });
+  return _userLocationIcon;
 }
 
 function haversineM(lat1, lon1, lat2, lon2) {
@@ -234,25 +236,25 @@ async function main() {
   let userMarker = null;
   let watchId = null;
 
-  function updateUserMarker(lat, lon, heading) {
+  function updateUserMarker(lat, lon) {
     lastCoords = { lat, lon };
-    const icon = userLocationIcon(heading);
     if (userMarker) {
       userMarker.setLatLng([lat, lon]);
-      userMarker.setIcon(icon);
     } else {
-      userMarker = L.marker([lat, lon], { icon, zIndexOffset: 1000, interactive: false }).addTo(map);
+      userMarker = L.marker([lat, lon], {
+        icon: userLocationIcon(), zIndexOffset: 1000, interactive: false,
+      }).addTo(map);
     }
   }
 
-  // Keeps the arrow moving after the first fix. Started once, from the
+  // Keeps the dot moving after the first fix. Started once, from the
   // locate button, since geolocation permission is already granted by
   // that point -- no separate prompt.
   function startWatchingLocation() {
     if (watchId != null || !("geolocation" in navigator)) return;
     watchId = navigator.geolocation.watchPosition(
-      (pos) => updateUserMarker(pos.coords.latitude, pos.coords.longitude, pos.coords.heading),
-      () => { /* keep the last-known arrow position on a transient watch error */ },
+      (pos) => updateUserMarker(pos.coords.latitude, pos.coords.longitude),
+      () => { /* keep the last-known dot position on a transient watch error */ },
       { enableHighAccuracy: true, maximumAge: 5000 }
     );
   }
@@ -301,8 +303,8 @@ async function main() {
     status.textContent = "Locating…";
     navigator.geolocation.getCurrentPosition(
       (pos) => {
-        const { latitude, longitude, heading } = pos.coords;
-        updateUserMarker(latitude, longitude, heading);
+        const { latitude, longitude } = pos.coords;
+        updateUserMarker(latitude, longitude);
         const { zone, distM } = nearestZone(latitude, longitude, zones);
         if (!zone) {
           status.textContent = "No bike rack zones found.";
