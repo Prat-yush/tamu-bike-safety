@@ -28,16 +28,18 @@
     <section id="nearest-panel" aria-live="polite">
       <button id="locate-btn">Locate closest bike rack zone</button>
       <div id="nearest-result">
-        <div class="grade-badge" id="nearest-grade"></div>
-        <div class="nearest-info">
-          <h2 id="nearest-name"></h2>
-          <p id="nearest-distance" class="muted-small"></p>
-          <ul id="nearest-facts" class="fact-list"></ul>
-          <div id="theft-warning" class="warning-box" hidden>
-            <p id="theft-warning-text"></p>
+        <div class="result-inner">
+          <div class="grade-badge" id="nearest-grade"></div>
+          <div class="nearest-info">
+            <h2 id="nearest-name"></h2>
+            <p id="nearest-distance" class="muted-small"></p>
+            <ul id="nearest-facts" class="fact-list"></ul>
+            <div id="theft-warning" class="warning-box" hidden>
+              <p id="theft-warning-text"></p>
+            </div>
+            <p class="caveat"><strong>Important:</strong> this information is based on
+              historical reports only and does not guarantee safety.</p>
           </div>
-          <p class="caveat"><strong>Important:</strong> this information is based on
-            historical reports only and does not guarantee safety.</p>
         </div>
       </div>
       <p id="locate-status" role="status"></p>

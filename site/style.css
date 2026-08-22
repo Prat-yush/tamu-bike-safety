@@ -126,30 +126,35 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
 
 #locate-status { color: var(--muted); margin: 0.6rem 0 0; }
 
-/* Collapsed by default (not just hidden -- animatable). display:flex here
-   would otherwise beat the [hidden] UA rule on specificity and show an
-   empty box before the first click. */
+/* Collapsed by default (not just hidden -- animatable). The old approach
+   animated max-height + padding, both of which force a full layout
+   recalculation on every animation frame -- that's what read as slow and
+   laggy. grid-template-rows: 0fr -> 1fr only costs a track-size
+   recompute, and opacity/margin-top are compositor-cheap, so the reveal
+   is smooth regardless of how tall the content inside turns out to be. */
 #nearest-result {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  margin-top: 0;
+  transition: grid-template-rows 0.35s ease, opacity 0.3s ease, margin-top 0.3s ease;
+}
+#nearest-result.visible {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 1rem;
+}
+
+.result-inner {
   display: flex;
   gap: 1.1rem;
   align-items: center;
+  min-height: 0; /* lets the grid row actually collapse to 0 instead of being forced open by content */
+  overflow: hidden;
   background: var(--card-bg);
   border-radius: 16px;
-  border: 1px solid transparent;
-  max-height: 0;
-  opacity: 0;
-  margin-top: 0;
-  padding: 0 1.1rem;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.35s ease,
-              margin-top 0.35s ease, padding 0.35s ease;
-}
-#nearest-result.visible {
-  max-height: 28rem;
-  opacity: 1;
-  margin-top: 1rem;
+  border: 1px solid var(--border);
   padding: 1.1rem;
-  border-color: var(--border);
   box-shadow: var(--shadow);
 }
 
@@ -168,7 +173,7 @@ main { padding-top: 1.85rem; padding-bottom: 2rem; }
 /* Small phones: badge sits above the info column, centered, instead of
    squeezing both side by side into a narrow strip. */
 @media (max-width: 420px) {
-  #nearest-result.visible {
+  .result-inner {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
