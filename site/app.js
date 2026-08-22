@@ -127,10 +127,9 @@ function coveragePhrase(months) {
 function estimateBasisPhrase(z) {
   const b = z.estimate_basis || {};
   if (b.method === "nearby_zones") {
-    return `Estimated from ${b.neighbor_count} nearby zone${b.neighbor_count === 1 ? "" : "s"} ` +
-      `(closest ${distanceText(b.nearest_neighbor_m)})`;
+    return `Estimated from ${b.neighbor_count} nearby zone${b.neighbor_count === 1 ? "" : "s"}`;
   }
-  return "Estimated from the campus-wide average -- no nearby zones have data either";
+  return "Estimated from the campus-wide average. No nearby zones have reports on file";
 }
 
 // Short fact lines for the nearest-zone card. Deliberately terse -- one
